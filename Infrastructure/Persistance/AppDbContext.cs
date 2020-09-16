@@ -11,9 +11,9 @@ namespace LibraryApp.Infrastructure.Persistance
 {
     public class AppDbContext : DbContext, IApplicationDbContext
     {
-        public AppDbContext() : base()
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

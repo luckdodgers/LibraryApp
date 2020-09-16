@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.Common.Mappings;
 using LibraryApp.Infrastructure.Persistance;
 using MediatR;
@@ -35,6 +36,7 @@ namespace LibraryApp
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddDbContextPool<AppDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped(typeof(IApplicationDbContext), typeof(AppDbContext));
 
             // TODO: Remove if Automapper works OK
             /*var mapperConfig = new MapperConfiguration(cfg =>

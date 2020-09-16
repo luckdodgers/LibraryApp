@@ -12,11 +12,13 @@ namespace LibraryApp.Infrastructure.Persistance.Configurations
     {
         public void Configure(EntityTypeBuilder<Author> builder)
         {
+            builder.Property(a => a.Id).ValueGeneratedOnAdd();
+
             builder.Property(a => a.Name).IsRequired();
 
-            builder.Property(a => a.BookAuthors)
-                .HasField("_bookAuthors")
-                .IsRequired();
+            //builder.Property(a => a.BookAuthors)
+                //.HasField("_bookAuthors");
+                //.IsRequired();
         }
     }
 }

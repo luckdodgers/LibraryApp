@@ -15,6 +15,8 @@ namespace LibraryApp.Domain.Entities
             Book = book;
         }
 
+        private BookAuthor() { }
+
         public int AuthorId { get; }
         public Author Author { get; }
         public int BookId { get; }
