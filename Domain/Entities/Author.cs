@@ -7,7 +7,16 @@ namespace LibraryApp.Domain.Entities
 {
     public class Author
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public Author(string name)
+        {
+            Name = name;
+        }
+
+        public int Id { get; }
+        public string Name { get; }
+        private HashSet<BookAuthor> _bookAuthors = new HashSet<BookAuthor>();
+        public IReadOnlyCollection<BookAuthor> BookAuthors => _bookAuthors.ToList();
+
+        public void AddBook(BookAuthor bookAuthor) => _bookAuthors.Add(bookAuthor);
     }
 }

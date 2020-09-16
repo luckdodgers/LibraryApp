@@ -7,9 +7,17 @@ namespace LibraryApp.Domain.Entities
 {
     public class BookAuthor
     {
-        public int AuthorId { get; set; }
-        public Author Author { get; set; }
-        public int BookId { get; set; }
-        public Book Book { get; set; }
+        public BookAuthor(int authorId, Author author, int bookId, Book book)
+        {
+            AuthorId = authorId;
+            Author = author;
+            BookId = bookId;
+            Book = book;
+        }
+
+        public int AuthorId { get; }
+        public Author Author { get; }
+        public int BookId { get; }
+        public Book Book { get; }
     }
 }
