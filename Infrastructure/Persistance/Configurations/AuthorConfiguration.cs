@@ -15,10 +15,6 @@ namespace LibraryApp.Infrastructure.Persistance.Configurations
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
 
             builder.Property(a => a.Name).IsRequired();
-
-            //builder.Property(a => a.BookAuthors)
-                //.HasField("_bookAuthors");
-                //.IsRequired();
         }
     }
 }

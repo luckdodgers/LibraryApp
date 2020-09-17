@@ -17,7 +17,7 @@ namespace LibraryApp.Domain.Entities
 
         public int Id { get; }
         public string Title { get; }
-        private HashSet<BookAuthor> _bookAuthors;
+        private HashSet<BookAuthor> _bookAuthors = new HashSet<BookAuthor>();
         public IReadOnlyList<BookAuthor> BookAuthors => _bookAuthors.ToList();
         public DateTime? ReceiveDate { get; private set; }
         public DateTime? ReturnDate { get; private set; }

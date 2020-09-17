@@ -30,6 +30,7 @@ namespace LibraryApp.Infrastructure.Persistance
             var books_authors = new List<Author>() { new Author("David J. Griffiths"), new Author("Darrell F. Schroeter") };
 
             await context.Books.AddAsync(book_1);
+            await context.Books.AddAsync(book_2);
             await context.Authors.AddRangeAsync(books_authors);
 
             await context.SaveChangesAsync();
@@ -40,6 +41,8 @@ namespace LibraryApp.Infrastructure.Persistance
                 new BookAuthor(books_authors[0].Id, books_authors[0], book_2.Id, book_2),
                 new BookAuthor(books_authors[1].Id, books_authors[1], book_1.Id, book_1),
             };
+
+            context.BookAuthors.AddRange(bookAuthors);
 
             book_1.SetAuthors(bookAuthors);
             book_2.SetAuthors(bookAuthors[0]);
