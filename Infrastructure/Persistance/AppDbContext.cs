@@ -5,11 +5,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Infrastructure.Persistance
 {
-    public class AppDbContext : DbContext, IApplicationDbContext
+    public class AppDbContext : IdentityDbContext<User>, IApplicationDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

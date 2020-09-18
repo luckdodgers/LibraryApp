@@ -1,4 +1,7 @@
-﻿using LibraryApp.Domain.Entities;
+﻿using LibraryApp.Domain;
+using LibraryApp.Domain.Entities;
+using LibraryApp.Infrastructure.Auth;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -52,6 +55,20 @@ namespace LibraryApp.Infrastructure.Persistance
             books_authors[1].AddBook(bookAuthors[2]);
 
             await context.SaveChangesAsync();
+        }
+
+        public static async Task SeedEssentialsAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            //Seed Roles
+            await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Roles.Reader.ToString()));
+            //Seed Default User
+            var defaultUser = new User { UserName = Authorization.default_username, Email = Authorization.default_email, EmailConfirmed = true, PhoneNumberConfirmed = true };
+            if (userManager.Users.All(u => u.Id != defaultUser.Id))
+            {
+                await userManager.CreateAsync(defaultUser, Authorization.default_password);
+                await userManager.AddToRoleAsync(defaultUser, Authorization.default_role.ToString());
+            }
         }
     }
 }
