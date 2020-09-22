@@ -5,9 +5,9 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Domain.Entities
+namespace LibraryApp.Infrastructure.Identity.Models
 {
-    public class User : IdentityUser
+    public class AppUser : IdentityUser
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

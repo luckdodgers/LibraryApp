@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Infrastructure.Auth
+namespace LibraryApp.Infrastructure.Identity.Models
 {
     public class JWT
     {

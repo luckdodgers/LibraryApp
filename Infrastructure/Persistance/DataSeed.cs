@@ -1,6 +1,8 @@
-﻿using LibraryApp.Domain;
+﻿using LibraryApp.Application.Common.Interfaces;
+using LibraryApp.Domain;
 using LibraryApp.Domain.Entities;
-using LibraryApp.Infrastructure.Auth;
+using LibraryApp.Infrastructure.Identity;
+using LibraryApp.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,17 +18,21 @@ namespace LibraryApp.Infrastructure.Persistance
         public static async Task EnsureSeedData(IServiceProvider provider)
         {
             var dbContext = provider.GetRequiredService<AppDbContext>();
+            var userManager = provider.GetRequiredService<UserManager<AppUser>>();
+            var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+
             await dbContext.Database.MigrateAsync();
 
-            if (!await dbContext.Books.AnyAsync())
-            {
-                await SeedBooks(dbContext);
-                await dbContext.SaveChangesAsync();
-            }
+            await SeedBooksAsync(dbContext);
+            await SeedEssentialsAsync(userManager, roleManager);
         }
 
-        private static async Task SeedBooks(AppDbContext context)
+        private static async Task SeedBooksAsync(IApplicationDbContext context)
         {
+            // Don't seed if any book already exists
+            if (await context.Books.AnyAsync())
+                return;
+
             var book_1 = new Book("Introduction to Quantum Mechanics"); // Authors: David J. Griffiths, Darrell F. Schroeter
             var book_2 = new Book("Introduction to Electrodynamics"); // Author: David J. Griffiths
 
@@ -57,17 +63,23 @@ namespace LibraryApp.Infrastructure.Persistance
             await context.SaveChangesAsync();
         }
 
-        public static async Task SeedEssentialsAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedEssentialsAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            //Seed Roles
+            // Don't seed if one of the roles already exists
+            if (await roleManager.RoleExistsAsync(Roles.Admin.ToString()))
+                return;
+
+            // Seeding roles
             await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Reader.ToString()));
-            //Seed Default User
-            var defaultUser = new User { UserName = Authorization.default_username, Email = Authorization.default_email, EmailConfirmed = true, PhoneNumberConfirmed = true };
+
+            // Seeding default User
+            var defaultUser = new DefaultUser();
+
             if (userManager.Users.All(u => u.Id != defaultUser.Id))
             {
-                await userManager.CreateAsync(defaultUser, Authorization.default_password);
-                await userManager.AddToRoleAsync(defaultUser, Authorization.default_role.ToString());
+                await userManager.CreateAsync(defaultUser, DefaultUser.default_password);
+                await userManager.AddToRoleAsync(defaultUser, DefaultUser.default_role.ToString());
             }
         }
     }

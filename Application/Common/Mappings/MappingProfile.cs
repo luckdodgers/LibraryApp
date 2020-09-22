@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using LibraryApp.Application.Books.Queries.Common;
+using LibraryApp.Application.User.Commands;
 using LibraryApp.Domain.Entities;
+using LibraryApp.Infrastructure.Identity;
+using LibraryApp.Infrastructure.Identity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +16,7 @@ namespace LibraryApp.Application.Common.Mappings
         public MappingProfile()
         {
             CreateMap<Book, CardBookDto>();
+            CreateMap<UserRegistrationCommand, AppUser>();
         }
     }
 }
