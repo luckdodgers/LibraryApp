@@ -20,6 +20,8 @@ namespace LibraryApp.Application.Common.Models
 
         public static Result Fail(IEnumerable<string> errors) => new Result(false, errors);
 
+        public static Result Fail(string error) => new Result(false, new string[] { error });
+
         public string ErrorsToString()
         {
             if (Errors?.Length > 0)

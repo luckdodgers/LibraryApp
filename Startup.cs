@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoMapper;
 using LibraryApp.Application.Common.Interfaces;
@@ -46,6 +47,10 @@ namespace LibraryApp
             services.Configure<JWT>(Configuration.GetSection("JWT"));
             services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             services.AddScoped<IUserService, UserService>();
+            services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             services.AddAuthentication(options =>
             {

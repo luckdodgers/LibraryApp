@@ -1,8 +1,11 @@
 ﻿using LibraryApp.Application.Common.Interfaces;
+using LibraryApp.Application.User.Commands;
 using LibraryApp.Domain;
 using LibraryApp.Domain.Entities;
 using LibraryApp.Infrastructure.Identity;
 using LibraryApp.Infrastructure.Identity.Models;
+using LibraryApp.Infrastructure.Identity.Models.AddRole;
+using LibraryApp.Infrastructure.Identity.Models.ChangeRole;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,21 +68,37 @@ namespace LibraryApp.Infrastructure.Persistance
 
         public static async Task SeedEssentialsAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            // Don't seed if one of the roles already exists
+            // Don't seed if admin role already exists
             if (await roleManager.RoleExistsAsync(Roles.Admin.ToString()))
                 return;
 
             // Seeding roles
-            await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
-            await roleManager.CreateAsync(new IdentityRole(Roles.Reader.ToString()));
+            foreach (var role in Enum.GetNames(typeof(Roles)))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
 
-            // Seeding default User
+            // Seeding default User for testing purpose
             var defaultUser = new DefaultUser();
 
-            if (userManager.Users.All(u => u.Id != defaultUser.Id))
+            if (!userManager.Users.Any(u => u.UserName == defaultUser.UserName))
             {
                 await userManager.CreateAsync(defaultUser, DefaultUser.default_password);
                 await userManager.AddToRoleAsync(defaultUser, DefaultUser.default_role.ToString());
+            }
+
+            // Seeding admin account
+            var defaultAdmin = new AppUser()
+            {
+                UserName = "DefaultAdmin",
+                FirstName = "Default",
+                LastName = "Admin"
+            };
+
+            if (!userManager.Users.Any(u => u.UserName == defaultAdmin.UserName))
+            {
+                await userManager.CreateAsync(defaultAdmin, "G1$5fmnsIa8");
+                await userManager.AddToRoleAsync(defaultAdmin, Roles.Admin.ToString());
             }
         }
     }

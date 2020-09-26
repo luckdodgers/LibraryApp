@@ -3,8 +3,11 @@ using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.Common.Models;
 using LibraryApp.Application.User.Commands;
 using LibraryApp.Domain;
-using LibraryApp.Domain.Entities;
 using LibraryApp.Infrastructure.Identity.Models;
+using LibraryApp.Infrastructure.Identity.Models.AddRole;
+using LibraryApp.Infrastructure.Identity.Models.Authentication;
+using LibraryApp.Infrastructure.Identity.Models.ChangeRole;
+using LibraryApp.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -103,6 +106,39 @@ namespace LibraryApp.Infrastructure.Identity
             }
 
             else return Result.Fail(result.Errors.Select(e => e.Description));
+        }
+
+        public async Task<Result> ChangeRoleAsync(ChangeRoleRequest request, RoleActions action)
+        {
+            var user = await _userManager.FindByNameAsync(request.UserName);
+
+            if (user == null)
+                return Result.Fail($"No account registred with username {request.UserName}");
+
+            // Checking if requested role exists
+            var role = Enum.GetNames(typeof(Roles)).FirstOrDefault(r => string.Equals(r, request.Role, StringComparison.OrdinalIgnoreCase));
+
+            if (role == null)
+                return Result.Fail($"Role {request.UserName} not found");
+
+            switch (action)
+            {
+                case RoleActions.Add:
+                    if (await _userManager.IsInRoleAsync(user, role))
+                        return Result.Fail($"User {request.UserName} already has role {request.Role}");
+
+                    await _userManager.AddToRoleAsync(user, role);
+                    break;
+
+                case RoleActions.Remove:
+                    if (!await _userManager.IsInRoleAsync(user, role))
+                        return Result.Fail($"User {request.UserName} currently has no role {request.Role}");
+
+                    await _userManager.RemoveFromRoleAsync(user, role);
+                    break;
+            }
+
+            return Result.Success();
         }
     }
 }

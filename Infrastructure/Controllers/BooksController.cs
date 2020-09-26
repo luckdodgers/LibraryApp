@@ -1,5 +1,7 @@
-﻿using LibraryApp.Application.Books.Queries;
+﻿using LibraryApp.Application.Books.Commands.AddBookToLibrary;
+using LibraryApp.Application.Books.Queries;
 using LibraryApp.Application.Books.Queries.Common;
+using LibraryApp.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -17,9 +19,11 @@ namespace LibraryApp.Infrastructure.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult> AddToLibrary()
+        [EnumAuthorize(RoleEnum = Roles.Admin)]
+        public async Task<ActionResult> AddToLibrary(AddBookCommand request)
         {
-
+            var result = await Mediator.Send(request);
+            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
         }
     }
 }

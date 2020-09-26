@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Infrastructure.Identity.Models
+namespace LibraryApp.Infrastructure.Identity.Models.Authentication
 {
     public class TokenRequest
     {
