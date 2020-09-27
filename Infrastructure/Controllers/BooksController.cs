@@ -15,7 +15,15 @@ namespace LibraryApp.Infrastructure.Controllers
         [HttpGet("cardId={cardId}")]
         public async Task<ActionResult<List<CardBookDto>>> GetCardBooks(int cardId)
         {
-            return await Mediator.Send(new GetCardBooksQuery(cardId));
+            var username = GetUsername();
+            return await Mediator.Send(new GetCardBooksQuery(cardId, username));
+        }
+
+        [HttpPost]
+        [Route("AddToCard")]
+        public async Task<ActionResult> AddBooksToCard(List<int> bookIdList)
+        {
+            var result = await Mediator.Send();
         }
 
         [HttpPost("[action]")]

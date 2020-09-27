@@ -21,6 +21,7 @@ namespace LibraryApp.Domain.Entities
         public IReadOnlyList<BookAuthor> BookAuthors => _bookAuthors.ToList();
         public DateTime? ReceiveDate { get; private set; }
         public DateTime? ReturnDate { get; private set; }
+        public int? CardId { get; private set; }
 
         public void SetAuthors(IEnumerable<BookAuthor> bookAuthors) => _bookAuthors = bookAuthors.ToHashSet();
         public void SetAuthors(BookAuthor bookAuthor)
@@ -31,14 +32,16 @@ namespace LibraryApp.Domain.Entities
             _bookAuthors.Add(bookAuthor);
         }
 
-        public void SetBorrowTerms()
+        public void SetCardAndTerms(int cardId)
         {
+            CardId = cardId;
             ReceiveDate = DateTime.Now;
             ReturnDate = DateTime.Now.AddDays(7);
         }
 
-        public void ResetBorrowTerms()
+        public void ResetCardAndTerms()
         {
+            CardId = null;
             ReceiveDate = null;
             ReturnDate = null;
         }

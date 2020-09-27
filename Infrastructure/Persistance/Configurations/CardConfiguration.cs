@@ -8,15 +8,14 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Infrastructure.Persistance.Configurations
 {
-    public class BookConfiguration : IEntityTypeConfiguration<Book>
+    public class CardConfiguration : IEntityTypeConfiguration<Card>
     {
-        public void Configure(EntityTypeBuilder<Book> builder)
+        public void Configure(EntityTypeBuilder<Card> builder)
         {
-            builder.Property(b => b.Id)
+            builder.Property(c => c.Id)
                 .ValueGeneratedOnAdd();
 
-            builder.Property(b => b.Title)
-                .HasMaxLength(100)
+            builder.Property(c => c.UserName)
                 .IsRequired();
         }
     }

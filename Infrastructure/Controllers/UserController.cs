@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 namespace LibraryApp.Infrastructure.Controllers
 {
     [Authorize]
-    [Route("[action]")]
     public class UserController : ApiController
     {
         private readonly IUserService _userService;
@@ -27,20 +26,26 @@ namespace LibraryApp.Infrastructure.Controllers
             _userService = userService;
         }
 
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> Register(UserRegistrationCommand data)
+        public async Task<ActionResult> Register(UserRegistrationCommand data) // ok
         {
             var result = await Mediator.Send(data);
             return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
         }
 
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         public async Task<ActionResult> GetToken(TokenRequest request)
         {
             var result = await _userService.GetTokenAsync(request);
-            return Ok(result);
+            return result.IsAuthorized ? Ok(result) : (ActionResult)BadRequest(result.Message);
         }
 
+        [HttpPost]
+        [Route("[action]")]
         [EnumAuthorize(RoleEnum = Roles.Admin)]
         public async Task<ActionResult> AddRole(ChangeRoleRequest request)
         {
@@ -48,6 +53,8 @@ namespace LibraryApp.Infrastructure.Controllers
             return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
         }
 
+        [HttpPost]
+        [Route("[action]")]
         [EnumAuthorize(RoleEnum = Roles.Admin)]
         public async Task<ActionResult> RemoveRole(ChangeRoleRequest request)
         {

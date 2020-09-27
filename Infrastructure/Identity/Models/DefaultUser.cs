@@ -17,7 +17,7 @@ namespace LibraryApp.Infrastructure.Identity
             LastName = "User";
         }
 
-        public const string default_password = "qwerty";
+        public const string default_password = "Qw3rty?!";
         public const Roles default_role = Roles.Reader;
     }
 }

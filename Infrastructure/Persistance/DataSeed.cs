@@ -6,6 +6,7 @@ using LibraryApp.Infrastructure.Identity;
 using LibraryApp.Infrastructure.Identity.Models;
 using LibraryApp.Infrastructure.Identity.Models.AddRole;
 using LibraryApp.Infrastructure.Identity.Models.ChangeRole;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,13 +22,15 @@ namespace LibraryApp.Infrastructure.Persistance
         public static async Task EnsureSeedData(IServiceProvider provider)
         {
             var dbContext = provider.GetRequiredService<AppDbContext>();
-            var userManager = provider.GetRequiredService<UserManager<AppUser>>();
+            //var userManager = provider.GetRequiredService<UserManager<AppUser>>();
             var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+            var mediator = provider.GetRequiredService<IMediator>();
+            var userService = provider.GetRequiredService<IUserService>();
 
             await dbContext.Database.MigrateAsync();
 
             await SeedBooksAsync(dbContext);
-            await SeedEssentialsAsync(userManager, roleManager);
+            await SeedEssentialsAsync(mediator, userService, roleManager);
         }
 
         private static async Task SeedBooksAsync(IApplicationDbContext context)
@@ -66,40 +69,45 @@ namespace LibraryApp.Infrastructure.Persistance
             await context.SaveChangesAsync();
         }
 
-        public static async Task SeedEssentialsAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedEssentialsAsync(IMediator mediator, IUserService userService, RoleManager<IdentityRole> roleManager)
         {
-            // Don't seed if admin role already exists
-            if (await roleManager.RoleExistsAsync(Roles.Admin.ToString()))
-                return;
-
             // Seeding roles
             foreach (var role in Enum.GetNames(typeof(Roles)))
             {
-                await roleManager.CreateAsync(new IdentityRole(role));
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
             }
-
-            // Seeding default User for testing purpose
-            var defaultUser = new DefaultUser();
-
-            if (!userManager.Users.Any(u => u.UserName == defaultUser.UserName))
+          
+            var defaultAdminRegCmd = new UserRegistrationCommand()
             {
-                await userManager.CreateAsync(defaultUser, DefaultUser.default_password);
-                await userManager.AddToRoleAsync(defaultUser, DefaultUser.default_role.ToString());
-            }
-
-            // Seeding admin account
-            var defaultAdmin = new AppUser()
-            {
-                UserName = "DefaultAdmin",
                 FirstName = "Default",
-                LastName = "Admin"
+                LastName = "Admin",
+                Password = "G1$5fmnsIa8",
+                UserName = "DefaultAdmin"
             };
 
-            if (!userManager.Users.Any(u => u.UserName == defaultAdmin.UserName))
+            // Seeding default admin
+            await mediator.Send(defaultAdminRegCmd);
+
+            var changeRoleRequest = new ChangeRoleRequest()
             {
-                await userManager.CreateAsync(defaultAdmin, "G1$5fmnsIa8");
-                await userManager.AddToRoleAsync(defaultAdmin, Roles.Admin.ToString());
-            }
+                Role = Roles.Admin.ToString(),
+                UserName = defaultAdminRegCmd.UserName
+            };
+
+            // Adding Admin role
+            await userService.ChangeRoleAsync(changeRoleRequest, RoleActions.Add);
+         
+            var defaultReaderRegCmd = new UserRegistrationCommand()
+            {
+                FirstName = "Default",
+                LastName = "Reader",
+                Password = "9A!m*8Kn",
+                UserName = "DefaultUser"
+            };
+
+            // Seeding default user
+            await mediator.Send(defaultReaderRegCmd);
         }
     }
 }

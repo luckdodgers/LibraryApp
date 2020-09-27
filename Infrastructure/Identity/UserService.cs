@@ -45,7 +45,7 @@ namespace LibraryApp.Infrastructure.Identity
 
             if (await _userManager.CheckPasswordAsync(user, request.Password))
             {
-                var jwtSecurityToken = await CreateJwtToken(user);
+                var jwtSecurityToken = await CreateJwtTokenAsync(user);
 
                 return new AuthentificationResponse(
                     message: string.Empty,
@@ -57,7 +57,7 @@ namespace LibraryApp.Infrastructure.Identity
             return AuthentificationResponse.Denied($"Incorrect password for username {request.UserName}");
         }
 
-        private async Task<JwtSecurityToken> CreateJwtToken(AppUser user)
+        private async Task<JwtSecurityToken> CreateJwtTokenAsync(AppUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);

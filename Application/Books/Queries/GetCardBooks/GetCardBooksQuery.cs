@@ -10,10 +10,12 @@ namespace LibraryApp.Application.Books.Queries
     public class GetCardBooksQuery : IRequest<List<CardBookDto>>
     {
         public int CardId { get; set; }
+        public string UserName { get; set; }
 
-        public GetCardBooksQuery(int cardId)
+        public GetCardBooksQuery(int cardId, string userName)
         {
             CardId = cardId;
+            UserName = userName;
         }
     }
 }

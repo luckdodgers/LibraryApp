@@ -15,6 +15,11 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
     {
         private readonly IApplicationDbContext _context;
 
+        public AddBookRequestHandler(IApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<Result> Handle(AddBookCommand request, CancellationToken cancellationToken)
         {
             var book = await _context.Books.FirstOrDefaultAsync();

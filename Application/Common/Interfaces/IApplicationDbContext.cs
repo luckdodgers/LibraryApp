@@ -13,6 +13,7 @@ namespace LibraryApp.Application.Common.Interfaces
         DbSet<Book> Books { get; set; }
         DbSet<Author> Authors { get; set; }
         DbSet<BookAuthor> BookAuthors { get; set; }
+        DbSet<Card> Cards { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

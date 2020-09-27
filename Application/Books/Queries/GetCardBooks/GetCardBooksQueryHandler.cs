@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using AutoMapper.QueryableExtensions;
 using AutoMapper;
 using LibraryApp.Application.Common.Mappings;
+using LibraryApp.Domain.Entities;
 
 namespace LibraryApp.Application.Books.Queries.GetCardBooks
 {
@@ -26,7 +27,11 @@ namespace LibraryApp.Application.Books.Queries.GetCardBooks
 
         public async Task<List<CardBookDto>> Handle(GetCardBooksQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Books.Where(b => b.Id == request.CardId).ProjectToListAsync<CardBookDto>(_mapper.ConfigurationProvider);
+            var result = _context.Cards.Include(c => c.Books);
+            var results = result.FirstOrDefault(c => c.UserName == request.UserName);
+            var books = results.Books;
+
+            return _mapper.Map<IReadOnlyCollection<Book>, List<CardBookDto>>(books);
         }
     }
 }
