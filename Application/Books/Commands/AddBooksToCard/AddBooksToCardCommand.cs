@@ -9,6 +9,13 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
 {
     public class AddBooksToCardCommand : IRequest<Result>
     {
-        public List<int> BookIdList { get; set; }
+        public AddBooksToCardCommand(int bookId, string userName)
+        {
+            BookId = bookId;
+            UserName = userName;
+        }
+
+        public int BookId { get; }
+        public string UserName { get; }
     }
 }

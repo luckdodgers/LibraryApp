@@ -29,7 +29,7 @@ namespace LibraryApp.Infrastructure.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> Register(UserRegistrationCommand data) // ok
+        public async Task<ActionResult> Register(UserRegistrationCommand data)
         {
             var result = await Mediator.Send(data);
             return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());

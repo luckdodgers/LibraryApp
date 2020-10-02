@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
 {
-    public class AddBookRequestHandler : IRequestHandler<AddBookCommand, Result>
+    public class AddBookToLibraryRequestHandler : IRequestHandler<AddBookToLibraryCommand, Result>
     {
         private readonly IApplicationDbContext _context;
 
-        public AddBookRequestHandler(IApplicationDbContext context)
+        public AddBookToLibraryRequestHandler(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Result> Handle(AddBookCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddBookToLibraryCommand request, CancellationToken cancellationToken)
         {
             var book = await _context.Books.FirstOrDefaultAsync();
 

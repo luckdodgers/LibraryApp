@@ -1,4 +1,4 @@
-﻿using LibraryApp.Application.Books.Queries.Common;
+﻿using LibraryApp.Application.Books.Queries.GetCardBooks;
 using MediatR;
 using System;
 using System.Collections.Generic;

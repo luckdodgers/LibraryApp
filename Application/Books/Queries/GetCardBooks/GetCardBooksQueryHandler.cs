@@ -27,11 +27,10 @@ namespace LibraryApp.Application.Books.Queries.GetCardBooks
 
         public async Task<List<CardBookDto>> Handle(GetCardBooksQuery request, CancellationToken cancellationToken)
         {
-            var result = _context.Cards.Include(c => c.Books);
-            var results = result.FirstOrDefault(c => c.UserName == request.UserName);
-            var books = results.Books;
+            var requestedCard = await _context.Cards.FirstOrDefaultAsync(c => c.UserName == request.UserName);
+            await _context.Entry(requestedCard).Collection(c => c.Books).LoadAsync();
 
-            return _mapper.Map<IReadOnlyCollection<Book>, List<CardBookDto>>(books);
+            return _mapper.Map<IReadOnlyCollection<Book>, List<CardBookDto>>(requestedCard.Books);
         }
     }
 }

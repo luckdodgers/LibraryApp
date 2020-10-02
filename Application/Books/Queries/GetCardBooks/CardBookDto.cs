@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LibraryApp.Application.Books.Queries.Common
+namespace LibraryApp.Application.Books.Queries.GetCardBooks
 {
     public class CardBookDto
     {
