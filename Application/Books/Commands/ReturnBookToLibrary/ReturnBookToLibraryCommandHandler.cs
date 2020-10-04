@@ -1,4 +1,5 @@
-﻿using LibraryApp.Application.Common.Interfaces;
+﻿using LibraryApp.Application.Common.Enums;
+using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,16 +24,20 @@ namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
         {
             try
             {
-                var requestedCard = await _context.Cards.FirstAsync(c => c.UserName == request.UserName);
+                var requestedCard = await _context.Cards.Where(c => c.UserName == request.UserName).Include(c => c.Books).FirstAsync();
                 var bookToRemove = requestedCard.Books.FirstOrDefault(b => b.Id == request.BookId);
+
+                if (bookToRemove == null)
+                    return Result.Fail(RequestError.NotFound, $"Requested book Id={request.BookId} not found in card");
+
                 requestedCard.TryRemoveBook(bookToRemove);
 
                 await _context.SaveChangesAsync();
             }
 
-            catch (Exception e)
+            catch
             {
-                return Result.Fail("Internal error");
+                return Result.Fail(RequestError.ApplicationException, "Internal error");
             }
 
             return Result.Success();

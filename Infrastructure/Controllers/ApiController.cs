@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using LibraryApp.Infrastructure.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
@@ -10,9 +11,15 @@ namespace LibraryApp.Infrastructure.Controllers
     [Route("api/[controller]")]
     public abstract class ApiController : ControllerBase
     {
-        private IMediator _mediator;
+        protected readonly IErrorToStatusCodeConverter _errorToStatusCode;
 
+        private IMediator _mediator;
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+
+        protected ApiController(IErrorToStatusCodeConverter errorToStatusCode)
+        {
+            _errorToStatusCode = errorToStatusCode;
+        }
 
         protected string GetUsername()
         {

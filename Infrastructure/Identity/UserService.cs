@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryApp.Application.Common.Enums;
 using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.Common.Models;
 using LibraryApp.Application.User.Commands;
@@ -94,7 +95,7 @@ namespace LibraryApp.Infrastructure.Identity
             var username = await _userManager.FindByNameAsync(data.UserName);
 
             if (username != null)
-                return Result.Fail(new string[] { $"User with username {data.UserName} already registered" });
+                return Result.Fail(RequestError.AlreadyExists, $"User with username {data.UserName} already registered");
 
             var user = _mapper.Map<UserRegistrationCommand, AppUser>(data);
             var result = await _userManager.CreateAsync(user, data.Password);
@@ -105,7 +106,7 @@ namespace LibraryApp.Infrastructure.Identity
                 return Result.Success();
             }
 
-            else return Result.Fail(result.Errors.Select(e => e.Description));
+            else return Result.Fail(RequestError.ValidationError, result.Errors.Select(e => e.Description));
         }
 
         public async Task<Result> ChangeRoleAsync(ChangeRoleRequest request, RoleActions action)
@@ -113,26 +114,26 @@ namespace LibraryApp.Infrastructure.Identity
             var user = await _userManager.FindByNameAsync(request.UserName);
 
             if (user == null)
-                return Result.Fail($"No account registred with username {request.UserName}");
+                return Result.Fail(RequestError.NotFound, $"No account registred with username {request.UserName}");
 
             // Checking if requested role exists
             var role = Enum.GetNames(typeof(Roles)).FirstOrDefault(r => string.Equals(r, request.Role, StringComparison.OrdinalIgnoreCase));
 
             if (role == null)
-                return Result.Fail($"Role {request.UserName} not found");
+                return Result.Fail(RequestError.NotFound, $"Role {request.UserName} not found");
 
             switch (action)
             {
                 case RoleActions.Add:
                     if (await _userManager.IsInRoleAsync(user, role))
-                        return Result.Fail($"User {request.UserName} already has role {request.Role}");
+                        return Result.Fail(RequestError.AlreadyExists, $"User {request.UserName} already has role {request.Role}");
 
                     await _userManager.AddToRoleAsync(user, role);
                     break;
 
                 case RoleActions.Remove:
                     if (!await _userManager.IsInRoleAsync(user, role))
-                        return Result.Fail($"User {request.UserName} currently has no role {request.Role}");
+                        return Result.Fail(RequestError.NotFound, $"User {request.UserName} currently has no role {request.Role}");
 
                     await _userManager.RemoveFromRoleAsync(user, role);
                     break;

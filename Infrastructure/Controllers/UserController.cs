@@ -1,17 +1,12 @@
 ﻿using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.User.Commands;
 using LibraryApp.Domain;
-using LibraryApp.Domain.Entities;
-using LibraryApp.Infrastructure.Identity.Models;
-using LibraryApp.Infrastructure.Identity.Models.AddRole;
 using LibraryApp.Infrastructure.Identity.Models.Authentication;
 using LibraryApp.Infrastructure.Identity.Models.ChangeRole;
+using LibraryApp.Infrastructure.Interfaces;
 using LibraryApp.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace LibraryApp.Infrastructure.Controllers
@@ -21,7 +16,7 @@ namespace LibraryApp.Infrastructure.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IErrorToStatusCodeConverter errorToStatusCode) : base(errorToStatusCode)
         {
             _userService = userService;
         }

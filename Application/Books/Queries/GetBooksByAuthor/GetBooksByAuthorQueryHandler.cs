@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using LibraryApp.Application.Common.Enums;
 using LibraryApp.Application.Common.Interfaces;
+using LibraryApp.Application.Common.Models;
 using LibraryApp.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
 {
-    public class GetBooksByAuthorQueryHandler : IRequestHandler<GetBooksByAuthorQuery, List<LibraryBookDto>>
+    public class GetBooksByAuthorQueryHandler : IRequestHandler<GetBooksByAuthorQuery, (Result, List<LibraryBookDto>)>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -22,17 +24,32 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
             _mapper = mapper;
         }
 
-        public async Task<List<LibraryBookDto>> Handle(GetBooksByAuthorQuery request, CancellationToken cancellationToken)
+        public async Task<(Result, List<LibraryBookDto>)> Handle(GetBooksByAuthorQuery request, CancellationToken cancellationToken)
         {
-            var books = _context.Authors
-                .First(r => r.Name == request.AuthorName)
-                .BookAuthors
-                .Select(ba => ba.Book);
+            var requestedData = new List<LibraryBookDto>(0);
 
-            if (request.CurrentlyAvailableOnly)
-                books = books.Where(b => b.CardId == null);
+            try
+            {
+                var author = await _context.Authors.FirstOrDefaultAsync(r => r.Name == request.AuthorName);
 
-            return _mapper.Map<IEnumerable<Book>, List<LibraryBookDto>>(books);
+                if (author == null)
+                    return (Result.Fail(RequestError.NotFound, $"Requested author {request.AuthorName} not found"), requestedData);
+
+                await _context.Entry(author).Collection(a => a.BookAuthors).LoadAsync();
+                var books = author.BookAuthors.Select(ba => ba.Book);
+
+                if (request.CurrentlyAvailableOnly)
+                    books = books.Where(b => b.CardId == null);
+
+                requestedData = _mapper.Map<IEnumerable<Book>, List<LibraryBookDto>>(books);
+            }
+
+            catch
+            {
+                return (Result.InternalError(), requestedData);
+            }
+
+            return (Result.Success(), requestedData);
         }
     }
 }

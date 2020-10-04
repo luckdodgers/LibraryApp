@@ -1,20 +1,16 @@
-﻿using LibraryApp.Application.Books.Queries.Common;
+﻿using AutoMapper;
 using LibraryApp.Application.Common.Interfaces;
+using LibraryApp.Application.Common.Models;
+using LibraryApp.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper.QueryableExtensions;
-using AutoMapper;
-using LibraryApp.Application.Common.Mappings;
-using LibraryApp.Domain.Entities;
 
 namespace LibraryApp.Application.Books.Queries.GetCardBooks
 {
-    public class GetCardBooksQueryHandler : IRequestHandler<GetCardBooksQuery, List<CardBookDto>>
+    public class GetCardBooksQueryHandler : IRequestHandler<GetCardBooksQuery, (Result, List<CardBookDto>)>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -25,12 +21,24 @@ namespace LibraryApp.Application.Books.Queries.GetCardBooks
             _mapper = mapper;
         }
 
-        public async Task<List<CardBookDto>> Handle(GetCardBooksQuery request, CancellationToken cancellationToken)
+        public async Task<(Result, List<CardBookDto>)> Handle(GetCardBooksQuery request, CancellationToken cancellationToken)
         {
-            var requestedCard = await _context.Cards.FirstOrDefaultAsync(c => c.UserName == request.UserName);
-            await _context.Entry(requestedCard).Collection(c => c.Books).LoadAsync();
+            var requestedData = new List<CardBookDto>(0);
 
-            return _mapper.Map<IReadOnlyCollection<Book>, List<CardBookDto>>(requestedCard.Books);
+            try
+            {
+                var requestedCard = await _context.Cards.FirstAsync(c => c.UserName == request.UserName);
+                await _context.Entry(requestedCard).Collection(c => c.Books).LoadAsync();
+
+                requestedData = _mapper.Map<IReadOnlyCollection<Book>, List<CardBookDto>>(requestedCard.Books);
+            }
+
+            catch
+            {
+                return (Result.InternalError(), requestedData);
+            }
+
+            return (Result.Success(), requestedData);
         }
     }
 }

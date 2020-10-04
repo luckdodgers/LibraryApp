@@ -1,4 +1,5 @@
-﻿using LibraryApp.Application.Common.Interfaces;
+﻿using LibraryApp.Application.Common.Enums;
+using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,16 +23,20 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
         {
             try
             {
+                var bookToAdd = await _context.Books.FirstOrDefaultAsync(b => b.Id == request.BookId);
+
+                if (bookToAdd == null)
+                    return Result.Fail(RequestError.NotFound, $"Requested book Id={request.BookId} not found");
+
                 var card = await _context.Cards.FirstAsync(c => c.UserName == request.UserName);
-                var bookToAdd = await _context.Books.FirstAsync(b => b.Id == request.BookId);
                 card.TryAddBook(bookToAdd);
 
                 await _context.SaveChangesAsync();
             }
 
-            catch (Exception e)
+            catch
             {
-                return Result.Fail("Internal error");
+                return Result.InternalError();
             }
 
             return Result.Success();

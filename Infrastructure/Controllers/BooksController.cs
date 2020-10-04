@@ -4,8 +4,12 @@ using LibraryApp.Application.Books.Commands.ReturnBookToLibrary;
 using LibraryApp.Application.Books.Queries;
 using LibraryApp.Application.Books.Queries.GetBooksByAuthor;
 using LibraryApp.Application.Books.Queries.GetCardBooks;
+using LibraryApp.Application.Common.Enums;
+using LibraryApp.Application.Common.Models;
 using LibraryApp.Domain;
+using LibraryApp.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,17 +20,37 @@ namespace LibraryApp.Infrastructure.Controllers
     [Authorize]
     public class BooksController : ApiController
     {
+        public BooksController(IErrorToStatusCodeConverter errorToStatusCode) : base(errorToStatusCode)
+        {
+        }
+
         [HttpGet("cardId={cardId}")]
         public async Task<ActionResult<List<CardBookDto>>> GetCardBooks(int cardId)
         {
             var username = GetUsername();
-            return await Mediator.Send(new GetCardBooksQuery(cardId, username));
+            var response = await Mediator.Send(new GetCardBooksQuery(cardId, username));
+
+            var result = response.Item1;
+            var requestedData = response.Item2;
+
+            if (result.Succeeded)
+                return requestedData;
+
+            return StatusCode(_errorToStatusCode.Convert(result.ErrorType));
         }
 
         [AllowAnonymous]
         public async Task<ActionResult<List<LibraryBookDto>>> GetBooksByAuthor(GetBooksByAuthorQuery request)
         {
-            return await Mediator.Send(request);
+            var response = await Mediator.Send(request);
+
+            var result = response.Item1;
+            var requestedData = response.Item2;
+
+            if (result.Succeeded)
+                return requestedData;
+
+            return StatusCode(_errorToStatusCode.Convert(result.ErrorType));
         }
 
         [HttpPost]
@@ -35,7 +59,8 @@ namespace LibraryApp.Infrastructure.Controllers
         {
             var username = GetUsername();
             var result = await Mediator.Send(new AddBooksToCardCommand(bookId, username));
-            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
+
+            return result.Succeeded ? NoContent() : StatusCode(_errorToStatusCode.Convert(result.ErrorType));
         }
 
         [HttpPost]
@@ -44,7 +69,8 @@ namespace LibraryApp.Infrastructure.Controllers
         {
             var username = GetUsername();
             var result = await Mediator.Send(new ReturnBookToLibraryCommand(cardId, username));
-            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
+
+            return result.Succeeded ? NoContent() : StatusCode(_errorToStatusCode.Convert(result.ErrorType));
         }
 
         [HttpPost("[action]")]
@@ -52,7 +78,7 @@ namespace LibraryApp.Infrastructure.Controllers
         public async Task<ActionResult> AddToLibrary(AddBookToLibraryCommand request)
         {
             var result = await Mediator.Send(request);
-            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
+            return result.Succeeded ? NoContent() : StatusCode(_errorToStatusCode.Convert(result.ErrorType));
         }
     }
 }
