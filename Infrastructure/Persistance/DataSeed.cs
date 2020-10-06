@@ -25,7 +25,7 @@ namespace LibraryApp.Infrastructure.Persistance
             //var userManager = provider.GetRequiredService<UserManager<AppUser>>();
             var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
             var mediator = provider.GetRequiredService<IMediator>();
-            var userService = provider.GetRequiredService<IUserService>();
+            var userService = provider.GetRequiredService<IIdentityService>();
 
             await dbContext.Database.MigrateAsync();
 
@@ -69,7 +69,7 @@ namespace LibraryApp.Infrastructure.Persistance
             await context.SaveChangesAsync();
         }
 
-        public static async Task SeedEssentialsAsync(IMediator mediator, IUserService userService, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedEssentialsAsync(IMediator mediator, IIdentityService userService, RoleManager<IdentityRole> roleManager)
         {
             // Seeding roles
             foreach (var role in Enum.GetNames(typeof(Roles)))

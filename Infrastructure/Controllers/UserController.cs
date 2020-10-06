@@ -14,9 +14,9 @@ namespace LibraryApp.Infrastructure.Controllers
     [Authorize]
     public class UserController : ApiController
     {
-        private readonly IUserService _userService;
+        private readonly IIdentityService _userService;
 
-        public UserController(IUserService userService, IErrorToStatusCodeConverter errorToStatusCode) : base(errorToStatusCode)
+        public UserController(IIdentityService userService, IErrorToStatusCodeConverter errorToStatusCode) : base(errorToStatusCode)
         {
             _userService = userService;
         }
@@ -24,16 +24,16 @@ namespace LibraryApp.Infrastructure.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> Register(UserRegistrationCommand data)
+        public async Task<ActionResult> Register(UserRegistrationCommand data) // Ok
         {
             var result = await Mediator.Send(data);
-            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
+            return result.Succeeded ? NoContent() : (ActionResult)BadRequest(result.ErrorsToString());
         }
 
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> GetToken(TokenRequest request)
+        public async Task<ActionResult> GetToken(TokenRequest request) // Ok
         {
             var result = await _userService.GetTokenAsync(request);
             return result.IsAuthorized ? Ok(result) : (ActionResult)BadRequest(result.Message);
@@ -45,7 +45,7 @@ namespace LibraryApp.Infrastructure.Controllers
         public async Task<ActionResult> AddRole(ChangeRoleRequest request)
         {
             var result = await _userService.ChangeRoleAsync(request, RoleActions.Add);
-            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
+            return result.Succeeded ? NoContent() : (ActionResult)BadRequest(result.ErrorsToString());
         }
 
         [HttpPost]
@@ -54,7 +54,7 @@ namespace LibraryApp.Infrastructure.Controllers
         public async Task<ActionResult> RemoveRole(ChangeRoleRequest request)
         {
             var result = await _userService.ChangeRoleAsync(request, RoleActions.Remove);
-            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.ErrorsToString());
+            return result.Succeeded ? NoContent() : (ActionResult)BadRequest(result.ErrorsToString());
         }
     }
 }

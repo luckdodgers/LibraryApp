@@ -13,9 +13,9 @@ namespace LibraryApp.Infrastructure.Services
 {
     public class RequestErrorToStatusCode : IErrorToStatusCodeConverter
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<RequestErrorToStatusCode> _logger;
 
-        public RequestErrorToStatusCode(ILogger logger)
+        public RequestErrorToStatusCode(ILogger<RequestErrorToStatusCode> logger)
         {
             _logger = logger;
         }

@@ -3,8 +3,8 @@ using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,10 +14,12 @@ namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
     public class ReturnBookToLibraryCommandHandler : IRequestHandler<ReturnBookToLibraryCommand, Result>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ILogger<ReturnBookToLibraryCommandHandler> _logger;
 
-        public ReturnBookToLibraryCommandHandler(IApplicationDbContext context)
+        public ReturnBookToLibraryCommandHandler(IApplicationDbContext context, ILogger<ReturnBookToLibraryCommandHandler> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(ReturnBookToLibraryCommand request, CancellationToken cancellationToken)
@@ -35,8 +37,9 @@ namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
                 await _context.SaveChangesAsync();
             }
 
-            catch
+            catch (Exception e)
             {
+                _logger.LogError(e.ToString());
                 return Result.Fail(RequestError.ApplicationException, "Internal error");
             }
 

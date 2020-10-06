@@ -5,6 +5,7 @@ using LibraryApp.Application.Common.Models;
 using LibraryApp.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,13 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<GetBooksByAuthorQueryHandler> _logger;
 
-        public GetBooksByAuthorQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public GetBooksByAuthorQueryHandler(IApplicationDbContext context, IMapper mapper, ILogger<GetBooksByAuthorQueryHandler> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<(Result, List<LibraryBookDto>)> Handle(GetBooksByAuthorQuery request, CancellationToken cancellationToken)
@@ -44,8 +47,9 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
                 requestedData = _mapper.Map<IEnumerable<Book>, List<LibraryBookDto>>(books);
             }
 
-            catch
+            catch (Exception e)
             {
+                _logger.LogError(e.ToString());
                 return (Result.InternalError(), requestedData);
             }
 

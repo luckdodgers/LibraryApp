@@ -1,8 +1,10 @@
-﻿using LibraryApp.Application.Common.Enums;
+﻿using LibraryApp.Application.Books.Commands.AddBookToLibrary;
+using LibraryApp.Application.Common.Enums;
 using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading;
@@ -13,10 +15,12 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
     public class AddBooksToCardCommandHandler : IRequestHandler<AddBooksToCardCommand, Result>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ILogger<AddBooksToCardCommandHandler> _logger;
 
-        public AddBooksToCardCommandHandler(IApplicationDbContext context)
+        public AddBooksToCardCommandHandler(IApplicationDbContext context, ILogger<AddBooksToCardCommandHandler> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(AddBooksToCardCommand request, CancellationToken cancellationToken)
@@ -34,8 +38,9 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
                 await _context.SaveChangesAsync();
             }
 
-            catch
+            catch (Exception e)
             {
+                _logger.LogError(e.ToString());
                 return Result.InternalError();
             }
 

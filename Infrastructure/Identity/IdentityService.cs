@@ -5,7 +5,6 @@ using LibraryApp.Application.Common.Models;
 using LibraryApp.Application.User.Commands;
 using LibraryApp.Domain;
 using LibraryApp.Infrastructure.Identity.Models;
-using LibraryApp.Infrastructure.Identity.Models.AddRole;
 using LibraryApp.Infrastructure.Identity.Models.Authentication;
 using LibraryApp.Infrastructure.Identity.Models.ChangeRole;
 using LibraryApp.Infrastructure.Persistance;
@@ -22,17 +21,15 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Infrastructure.Identity
 {
-    public class UserService : IUserService
+    public class IdentityService : IIdentityService
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWT _jwt;
         private readonly IMapper _mapper;
 
-        public UserService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt, IMapper mapper)
+        public IdentityService(UserManager<AppUser> userManager, IOptions<JWT> jwt, IMapper mapper)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _jwt = jwt.Value;
             _mapper = mapper;
         }

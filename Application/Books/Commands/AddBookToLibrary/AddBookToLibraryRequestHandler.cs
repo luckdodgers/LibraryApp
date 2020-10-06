@@ -4,6 +4,7 @@ using LibraryApp.Application.Common.Models;
 using LibraryApp.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,12 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
     public class AddBookToLibraryRequestHandler : IRequestHandler<AddBookToLibraryCommand, Result>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ILogger<AddBookToLibraryRequestHandler> _logger;
 
-        public AddBookToLibraryRequestHandler(IApplicationDbContext context)
+        public AddBookToLibraryRequestHandler(IApplicationDbContext context, ILogger<AddBookToLibraryRequestHandler> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(AddBookToLibraryCommand request, CancellationToken cancellationToken)
@@ -71,8 +74,9 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
                 await _context.SaveChangesAsync();
             }
 
-            catch
+            catch (Exception e)
             {
+                _logger.LogError(e.ToString());
                 return Result.InternalError();
             }
 

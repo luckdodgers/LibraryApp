@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Common.Interfaces
 {
-    public interface IUserService
+    public interface IIdentityService
     {
         Task<Result> RegisterAsync(UserRegistrationCommand data);
 
