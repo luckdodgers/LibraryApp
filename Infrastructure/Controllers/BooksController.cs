@@ -27,16 +27,12 @@ namespace LibraryApp.Infrastructure.Controllers
         public async Task<ActionResult<List<CardBookDto>>> GetCardBooks(int cardId)
         {
             var username = _currentUser.UserName;
-            //var username = GetUsername();
             var response = await Mediator.Send(new GetCardBooksQuery(cardId, username));
 
-            var result = response.Item1;
-            var requestedData = response.Item2;
+            if (response.Succeeded)
+                return response.Value;
 
-            if (result.Succeeded)
-                return requestedData;
-
-            return StatusCode(_errorToStatusCode.Convert(result.ErrorType));
+            return StatusCode(_errorToStatusCode.Convert(response.ErrorType));
         }
 
         [AllowAnonymous]
@@ -44,21 +40,24 @@ namespace LibraryApp.Infrastructure.Controllers
         {
             var response = await Mediator.Send(request);
 
-            var result = response.Item1;
-            var requestedData = response.Item2;
+            if (response.Succeeded)
+                return response.Value;
 
-            if (result.Succeeded)
-                return requestedData;
+            AddToCard(1);
 
-            return StatusCode(_errorToStatusCode.Convert(result.ErrorType));
+            return StatusCode(_errorToStatusCode.Convert(response.ErrorType));
         }
 
+        /// <summary>
+        /// Some comment
+        /// </summary>
+        /// <param name="bookId"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]/bookid={bookId}")]
         public async Task<ActionResult> AddToCard(int bookId) // Ok
         {
             var username = _currentUser.UserName;
-            //var username = GetUsername();
             var result = await Mediator.Send(new AddBooksToCardCommand(bookId, username));
 
             return result.Succeeded ? NoContent() : StatusCode(_errorToStatusCode.Convert(result.ErrorType));
@@ -69,7 +68,6 @@ namespace LibraryApp.Infrastructure.Controllers
         public async Task<ActionResult> ReturnToLibrary(int bookId) // Ok
         {
             var username = _currentUser.UserName;
-            //var username = GetUsername();
             var result = await Mediator.Send(new ReturnBookToLibraryCommand(bookId, username));
 
             return result.Succeeded ? NoContent() : StatusCode(_errorToStatusCode.Convert(result.ErrorType));

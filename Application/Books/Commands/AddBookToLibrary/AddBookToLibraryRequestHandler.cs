@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
 {
-    public class AddBookToLibraryRequestHandler : IRequestHandler<AddBookToLibraryCommand, Result>
+    public class AddBookToLibraryRequestHandler : IRequestHandler<AddBookToLibraryCommand, CommandResult>
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<AddBookToLibraryRequestHandler> _logger;
@@ -24,14 +24,14 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
             _logger = logger;
         }
 
-        public async Task<Result> Handle(AddBookToLibraryCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResult> Handle(AddBookToLibraryCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var book = await _context.Books.FirstOrDefaultAsync();
 
                 if (await _context.Books.AnyAsync(b => b.Title == request.Title && b.BookAuthors == request.Authors))
-                    return Result.Fail(RequestError.AlreadyExists, $"Book with title {request.Title} and authors {string.Join(", ", request.Authors)} already exist");
+                    return CommandResult.Fail(RequestError.AlreadyExists, $"Book with title {request.Title} and authors {string.Join(", ", request.Authors)} already exist");
 
                 // Caching authors of new book
                 var authors = new List<Author>(request.Authors.Count);
@@ -77,10 +77,10 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return Result.InternalError();
+                return CommandResult.InternalError();
             }
 
-            return Result.Success();
+            return CommandResult.Success();
         }
     }
 }

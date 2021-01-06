@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
 {
-    public class GetBooksByAuthorQueryHandler : IRequestHandler<GetBooksByAuthorQuery, (Result, List<LibraryBookDto>)>
+    public class GetBooksByAuthorQueryHandler : IRequestHandler<GetBooksByAuthorQuery, QueryResult<List<LibraryBookDto>>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -27,7 +27,7 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
             _logger = logger;
         }
 
-        public async Task<(Result, List<LibraryBookDto>)> Handle(GetBooksByAuthorQuery request, CancellationToken cancellationToken)
+        public async Task<QueryResult<List<LibraryBookDto>>> Handle(GetBooksByAuthorQuery request, CancellationToken cancellationToken)
         {
             var requestedData = new List<LibraryBookDto>(0);
 
@@ -36,7 +36,7 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
                 var author = await _context.Authors.FirstOrDefaultAsync(r => r.Name == request.AuthorName);
 
                 if (author == null)
-                    return (Result.Fail(RequestError.NotFound, $"Requested author {request.AuthorName} not found"), requestedData);
+                    return QueryResult<List<LibraryBookDto>>.Fail(RequestError.NotFound, $"Requested author {request.AuthorName} not found");
 
                 await _context.Entry(author).Collection(a => a.BookAuthors).LoadAsync();
                 var books = author.BookAuthors.Select(ba => ba.Book);
@@ -50,10 +50,10 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return (Result.InternalError(), requestedData);
+                return QueryResult<List<LibraryBookDto>>.InternalError();
             }
 
-            return (Result.Success(), requestedData);
+            return QueryResult<List<LibraryBookDto>>.Success(requestedData);
         }
     }
 }

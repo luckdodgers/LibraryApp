@@ -20,7 +20,7 @@ namespace LibraryApp.Application
             services.AddDbContextPool<AppDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped(typeof(IApplicationDbContext), typeof(AppDbContext));
-            //services.AddTransient(typeof(IRequestExceptionHandler<,,>), typeof(ExceptionBehaviour<,,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CommandValidationBehaviour<,>));
             services.AddTransient(typeof(IRequestPreProcessor<>), typeof(LoggingBehaviour<>));
 
             return services;

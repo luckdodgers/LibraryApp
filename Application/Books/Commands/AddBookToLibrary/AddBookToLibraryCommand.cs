@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
 {
-    public class AddBookToLibraryCommand : IRequest<Result>
+    public class AddBookToLibraryCommand : IRequest<CommandResult>
     {
         public string Title { get; set; }
         public List<string> Authors { get; set; }

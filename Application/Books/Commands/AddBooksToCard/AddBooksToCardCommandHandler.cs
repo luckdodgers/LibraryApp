@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Commands.AddBooksToCard
 {
-    public class AddBooksToCardCommandHandler : IRequestHandler<AddBooksToCardCommand, Result>
+    public class AddBooksToCardCommandHandler : IRequestHandler<AddBooksToCardCommand, CommandResult>
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<AddBooksToCardCommandHandler> _logger;
@@ -23,14 +23,14 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
             _logger = logger;
         }
 
-        public async Task<Result> Handle(AddBooksToCardCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResult> Handle(AddBooksToCardCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var bookToAdd = await _context.Books.FirstOrDefaultAsync(b => b.Id == request.BookId);
 
                 if (bookToAdd == null)
-                    return Result.Fail(RequestError.NotFound, $"Requested book Id={request.BookId} not found");
+                    return CommandResult.Fail(RequestError.NotFound, $"Requested book Id={request.BookId} not found");
 
                 var card = await _context.Cards.FirstAsync(c => c.UserName == request.UserName);
                 card.TryAddBook(bookToAdd);
@@ -41,10 +41,10 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return Result.InternalError();
+                return CommandResult.InternalError();
             }
 
-            return Result.Success();
+            return CommandResult.Success();
         }
     }
 }

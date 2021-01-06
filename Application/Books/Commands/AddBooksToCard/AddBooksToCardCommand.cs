@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Commands.AddBooksToCard
 {
-    public class AddBooksToCardCommand : IRequest<Result>
+    public class AddBooksToCardCommand : IRequest<CommandResult>
     {
         public AddBooksToCardCommand(int bookId, string userName)
         {

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
 {
-    public class ReturnBookToLibraryCommandHandler : IRequestHandler<ReturnBookToLibraryCommand, Result>
+    public class ReturnBookToLibraryCommandHandler : IRequestHandler<ReturnBookToLibraryCommand, CommandResult>
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<ReturnBookToLibraryCommandHandler> _logger;
@@ -22,7 +22,7 @@ namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
             _logger = logger;
         }
 
-        public async Task<Result> Handle(ReturnBookToLibraryCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResult> Handle(ReturnBookToLibraryCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
                 var bookToRemove = requestedCard.Books.FirstOrDefault(b => b.Id == request.BookId);
 
                 if (bookToRemove == null)
-                    return Result.Fail(RequestError.NotFound, $"Requested book Id={request.BookId} not found in card");
+                    return CommandResult.Fail(RequestError.NotFound, $"Requested book Id={request.BookId} not found in card");
 
                 requestedCard.TryRemoveBook(bookToRemove);
 
@@ -40,10 +40,10 @@ namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return Result.Fail(RequestError.ApplicationException, "Internal error");
+                return CommandResult.Fail(RequestError.ApplicationException, "Internal error");
             }
 
-            return Result.Success();
+            return CommandResult.Success();
         }
     }
 }

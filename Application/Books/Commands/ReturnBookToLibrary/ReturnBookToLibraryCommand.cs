@@ -3,7 +3,7 @@ using MediatR;
 
 namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
 {
-    public class ReturnBookToLibraryCommand : IRequest<Result>
+    public class ReturnBookToLibraryCommand : IRequest<CommandResult>
     {
         public int BookId { get; }
         public string UserName { get; }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Queries.GetCardBooks
 {
-    public class GetCardBooksQueryHandler : IRequestHandler<GetCardBooksQuery, (Result, List<CardBookDto>)>
+    public class GetCardBooksQueryHandler : IRequestHandler<GetCardBooksQuery, QueryResult<List<CardBookDto>>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace LibraryApp.Application.Books.Queries.GetCardBooks
             _logger = logger;
         }
 
-        public async Task<(Result, List<CardBookDto>)> Handle(GetCardBooksQuery request, CancellationToken cancellationToken)
+        public async Task<QueryResult<List<CardBookDto>>> Handle(GetCardBooksQuery request, CancellationToken cancellationToken)
         {
             var requestedData = new List<CardBookDto>(0);
 
@@ -40,10 +40,10 @@ namespace LibraryApp.Application.Books.Queries.GetCardBooks
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return (Result.InternalError(), requestedData);
+                return QueryResult<List<CardBookDto>>.InternalError();
             }
 
-            return (Result.Success(), requestedData);
+            return QueryResult<List<CardBookDto>>.Success(requestedData);
         }
     }
 }
