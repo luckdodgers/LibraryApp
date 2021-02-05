@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using LibraryApp.Application.Common.Interfaces;
+﻿using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Domain.Entities;
-using LibraryApp.Infrastructure.Identity;
 using LibraryApp.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace LibraryApp.Infrastructure.Persistance
 {
@@ -16,7 +11,7 @@ namespace LibraryApp.Infrastructure.Persistance
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

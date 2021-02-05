@@ -3,12 +3,8 @@ using LibraryApp.Application.Books.Queries.GetBooksByAuthor;
 using LibraryApp.Application.Books.Queries.GetCardBooks;
 using LibraryApp.Application.User.Commands;
 using LibraryApp.Domain.Entities;
-using LibraryApp.Infrastructure.Identity;
 using LibraryApp.Infrastructure.Identity.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Common.Mappings
 {

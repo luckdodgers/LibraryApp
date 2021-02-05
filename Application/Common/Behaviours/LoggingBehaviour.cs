@@ -21,7 +21,7 @@ namespace LibraryApp.Application.Common.Behaviours
         {
             var requestName = typeof(TRequest).Name;
             var currentUser = _currentUser.UserName;
-            
+
             _logger.LogInformation("Request: {@requestName} {user} {@request}", requestName, currentUser, request);
 
             return Task.CompletedTask;

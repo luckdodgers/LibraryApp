@@ -1,7 +1,5 @@
-﻿using LibraryApp.Application.Books.Queries.GetCardBooks;
-using LibraryApp.Application.Common.Models;
+﻿using LibraryApp.Application.Common.Models;
 using MediatR;
-using System.Collections.Generic;
 
 namespace LibraryApp.Application.Books.Queries
 {

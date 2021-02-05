@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using LibraryApp.Application.Common.Behaviours;
 using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Infrastructure.Persistance;

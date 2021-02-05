@@ -2,9 +2,6 @@
 using LibraryApp.Application.User.Commands;
 using LibraryApp.Domain;
 using LibraryApp.Domain.Entities;
-using LibraryApp.Infrastructure.Identity;
-using LibraryApp.Infrastructure.Identity.Models;
-using LibraryApp.Infrastructure.Identity.Models.AddRole;
 using LibraryApp.Infrastructure.Identity.Models.ChangeRole;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace LibraryApp.Infrastructure.Persistance
@@ -50,8 +46,8 @@ namespace LibraryApp.Infrastructure.Persistance
 
             await context.SaveChangesAsync();
 
-            var bookAuthors = new List<BookAuthor>() 
-            { 
+            var bookAuthors = new List<BookAuthor>()
+            {
                 new BookAuthor(books_authors[0].Id, books_authors[0], book_1.Id, book_1),
                 new BookAuthor(books_authors[0].Id, books_authors[0], book_2.Id, book_2),
                 new BookAuthor(books_authors[1].Id, books_authors[1], book_1.Id, book_1),
@@ -77,7 +73,7 @@ namespace LibraryApp.Infrastructure.Persistance
                 if (!await roleManager.RoleExistsAsync(role))
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
-          
+
             var defaultAdminRegCmd = new UserRegistrationCommand()
             {
                 FirstName = "Default",
@@ -97,7 +93,7 @@ namespace LibraryApp.Infrastructure.Persistance
 
             // Adding Admin role
             await userService.ChangeRoleAsync(changeRoleRequest, RoleActions.Add);
-         
+
             var defaultReaderRegCmd = new UserRegistrationCommand()
             {
                 FirstName = "Default",
