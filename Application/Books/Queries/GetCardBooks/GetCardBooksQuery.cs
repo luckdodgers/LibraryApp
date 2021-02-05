@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LibraryApp.Application.Books.Queries
 {
-    public class GetCardBooksQuery : IRequest<QueryResult<List<CardBookDto>>>
+    public class GetCardBooksQuery : IRequest<BaseResult>
     {
         public int CardId { get; }
         public string UserName { get; }

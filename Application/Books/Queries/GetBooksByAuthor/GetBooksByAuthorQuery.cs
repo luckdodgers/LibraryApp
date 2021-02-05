@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
 {
-    public class GetBooksByAuthorQuery : IRequest<QueryResult<List<LibraryBookDto>>>
+    public class GetBooksByAuthorQuery : IRequest<BaseResult>
     {
         public string AuthorName { get; set; }
         public bool CurrentlyAvailableOnly { get; set; }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.User.Commands
 {
-    public class UserRegistrationCommandHandler : IRequestHandler<UserRegistrationCommand, CommandResult>
+    public class UserRegistrationCommandHandler : IRequestHandler<UserRegistrationCommand, RequestResult>
     {
         private readonly IIdentityService _userService;
         private readonly IApplicationDbContext _context;
@@ -24,9 +24,9 @@ namespace LibraryApp.Application.User.Commands
             _logger = logger;
         }
 
-        public async Task<CommandResult> Handle(UserRegistrationCommand request, CancellationToken cancellationToken)
+        public async Task<RequestResult> Handle(UserRegistrationCommand request, CancellationToken cancellationToken)
         {
-            CommandResult result;
+            RequestResult result;
 
             try
             {
@@ -42,7 +42,7 @@ namespace LibraryApp.Application.User.Commands
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return CommandResult.InternalError();
+                return RequestResult.InternalError();
             }
 
             return result;

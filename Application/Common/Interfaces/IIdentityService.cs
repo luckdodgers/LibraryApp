@@ -15,10 +15,10 @@ namespace LibraryApp.Application.Common.Interfaces
 {
     public interface IIdentityService
     {
-        Task<CommandResult> RegisterAsync(UserRegistrationCommand data);
+        Task<RequestResult> RegisterAsync(UserRegistrationCommand data);
 
         Task<AuthentificationResponse> GetTokenAsync(TokenRequest request);
 
-        Task<CommandResult> ChangeRoleAsync(ChangeRoleRequest request, RoleActions action);
+        Task<RequestResult> ChangeRoleAsync(ChangeRoleRequest request, RoleActions action);
     }
 }

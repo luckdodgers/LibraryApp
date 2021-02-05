@@ -3,7 +3,7 @@ using MediatR;
 
 namespace LibraryApp.Application.User.Commands
 {
-    public class UserRegistrationCommand : IRequest<CommandResult>
+    public class UserRegistrationCommand : IRequest<RequestResult>
     {
         public string UserName { get; set; }
         public string Password { get; set; }

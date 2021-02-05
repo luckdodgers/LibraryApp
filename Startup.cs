@@ -28,7 +28,7 @@ namespace LibraryApp
         {
             services.AddHttpContextAccessor();
             services.AddControllers();
-            services.AddApplication(Configuration);
+            services.AddApplication(Configuration); // Dependencies configuration
             services.AddInfrastructure();
             services.Configure<JWT>(Configuration.GetSection("JWT"));
 

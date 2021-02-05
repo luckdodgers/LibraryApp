@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
 {
-    public class GetBooksByAuthorQueryHandler : IRequestHandler<GetBooksByAuthorQuery, QueryResult<List<LibraryBookDto>>>
+    public class GetBooksByAuthorQueryHandler : IRequestHandler<GetBooksByAuthorQuery, BaseResult>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -27,7 +27,7 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
             _logger = logger;
         }
 
-        public async Task<QueryResult<List<LibraryBookDto>>> Handle(GetBooksByAuthorQuery request, CancellationToken cancellationToken)
+        public async Task<BaseResult> Handle(GetBooksByAuthorQuery request, CancellationToken cancellationToken)
         {
             var requestedData = new List<LibraryBookDto>(0);
 

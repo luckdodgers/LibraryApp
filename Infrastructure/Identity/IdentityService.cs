@@ -87,12 +87,12 @@ namespace LibraryApp.Infrastructure.Identity
             return jwtSecurityToken;
         }
 
-        public async Task<CommandResult> RegisterAsync(UserRegistrationCommand data)
+        public async Task<RequestResult> RegisterAsync(UserRegistrationCommand data)
         {
             var username = await _userManager.FindByNameAsync(data.UserName);
 
             if (username != null)
-                return CommandResult.Fail(RequestError.AlreadyExists, $"User with username {data.UserName} already registered");
+                return RequestResult.Fail(RequestError.AlreadyExists, $"User with username {data.UserName} already registered");
 
             var user = _mapper.Map<UserRegistrationCommand, AppUser>(data);
             var result = await _userManager.CreateAsync(user, data.Password);
@@ -100,43 +100,43 @@ namespace LibraryApp.Infrastructure.Identity
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, Roles.Reader.ToString());
-                return CommandResult.Success();
+                return RequestResult.Success();
             }
 
-            else return CommandResult.Fail(RequestError.ValidationError, result.Errors.Select(e => e.Description));
+            else return RequestResult.Fail(RequestError.ValidationError, result.Errors.Select(e => e.Description));
         }
 
-        public async Task<CommandResult> ChangeRoleAsync(ChangeRoleRequest request, RoleActions action)
+        public async Task<RequestResult> ChangeRoleAsync(ChangeRoleRequest request, RoleActions action)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
 
             if (user == null)
-                return CommandResult.Fail(RequestError.NotFound, $"No account registred with username {request.UserName}");
+                return RequestResult.Fail(RequestError.NotFound, $"No account registred with username {request.UserName}");
 
             // Checking if requested role exists
             var role = Enum.GetNames(typeof(Roles)).FirstOrDefault(r => string.Equals(r, request.Role, StringComparison.OrdinalIgnoreCase));
 
             if (role == null)
-                return CommandResult.Fail(RequestError.NotFound, $"Role {request.UserName} not found");
+                return RequestResult.Fail(RequestError.NotFound, $"Role {request.UserName} not found");
 
             switch (action)
             {
                 case RoleActions.Add:
                     if (await _userManager.IsInRoleAsync(user, role))
-                        return CommandResult.Fail(RequestError.AlreadyExists, $"User {request.UserName} already has role {request.Role}");
+                        return RequestResult.Fail(RequestError.AlreadyExists, $"User {request.UserName} already has role {request.Role}");
 
                     await _userManager.AddToRoleAsync(user, role);
                     break;
 
                 case RoleActions.Remove:
                     if (!await _userManager.IsInRoleAsync(user, role))
-                        return CommandResult.Fail(RequestError.NotFound, $"User {request.UserName} currently has no role {request.Role}");
+                        return RequestResult.Fail(RequestError.NotFound, $"User {request.UserName} currently has no role {request.Role}");
 
                     await _userManager.RemoveFromRoleAsync(user, role);
                     break;
             }
 
-            return CommandResult.Success();
+            return RequestResult.Success();
         }
     }
 }

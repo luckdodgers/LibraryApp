@@ -4,6 +4,7 @@ using LibraryApp.Application.Books.Commands.ReturnBookToLibrary;
 using LibraryApp.Application.Books.Queries;
 using LibraryApp.Application.Books.Queries.GetBooksByAuthor;
 using LibraryApp.Application.Books.Queries.GetCardBooks;
+using LibraryApp.Application.Common.Models;
 using LibraryApp.Domain;
 using LibraryApp.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +31,7 @@ namespace LibraryApp.Infrastructure.Controllers
             var response = await Mediator.Send(new GetCardBooksQuery(cardId, username));
 
             if (response.Succeeded)
-                return response.Value;
+                return ((QueryResult<List<CardBookDto>>)response).Value;
 
             return StatusCode(_errorToStatusCode.Convert(response.ErrorType));
         }
@@ -41,9 +42,7 @@ namespace LibraryApp.Infrastructure.Controllers
             var response = await Mediator.Send(request);
 
             if (response.Succeeded)
-                return response.Value;
-
-            AddToCard(1);
+                return ((QueryResult<List<LibraryBookDto>>)response).Value;
 
             return StatusCode(_errorToStatusCode.Convert(response.ErrorType));
         }
