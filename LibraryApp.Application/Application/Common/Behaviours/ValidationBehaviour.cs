@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using LibraryApp.Application.Application.Common.Models;
 using LibraryApp.Application.Common.Models;
 using MediatR;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Application.Common.Behaviours
 {
-    public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : BaseResult
+    public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : IRequestResult
     {
         private readonly IEnumerable<IValidator> _validators;
 
@@ -29,7 +30,7 @@ namespace LibraryApp.Application.Common.Behaviours
             if (validationFailures.Any())
             {
                 var error = string.Join("\r\n", validationFailures);
-                return RequestResult.Fail(Enums.RequestError.ValidationError, error) as TResponse;
+                return (TResponse)(RequestResult.Fail(Enums.RequestError.ValidationError, error) as IRequestResult);
             }
 
             return await next();

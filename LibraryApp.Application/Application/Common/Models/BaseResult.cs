@@ -1,10 +1,11 @@
-﻿using LibraryApp.Application.Common.Enums;
+﻿using LibraryApp.Application.Application.Common.Models;
+using LibraryApp.Application.Common.Enums;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace LibraryApp.Application.Common.Models
 {
-    public abstract class BaseResult
+    public abstract class BaseResult : IRequestResult
     {
         public bool Succeeded { get; }
         public RequestError ErrorType { get; } = RequestError.None;
