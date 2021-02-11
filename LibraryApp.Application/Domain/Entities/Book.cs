@@ -13,20 +13,21 @@ namespace LibraryApp.Domain.Entities
 
         private Book() { }
 
-        public int Id { get; }
+        public virtual int Id { get; }
         public string Title { get; }
         private HashSet<BookAuthor> _bookAuthors = new HashSet<BookAuthor>();
         public IReadOnlyList<BookAuthor> BookAuthors => _bookAuthors.ToList();
         public DateTime? ReceiveDate { get; private set; }
         public DateTime? ReturnDate { get; private set; }
-        public int? CardId { get; private set; }
+        public virtual int? CardId { get; private set; }
 
         public void SetAuthors(IEnumerable<BookAuthor> bookAuthors) => _bookAuthors = bookAuthors.ToHashSet();
-        public void SetAuthors(BookAuthor bookAuthor)
+        public void SetAuthor(BookAuthor bookAuthor)
         {
             if (_bookAuthors == null)
                 _bookAuthors = new HashSet<BookAuthor>();
 
+            _bookAuthors.Clear();
             _bookAuthors.Add(bookAuthor);
         }
 

@@ -56,7 +56,7 @@ namespace LibraryApp.Infrastructure.Persistance
             context.BookAuthors.AddRange(bookAuthors);
 
             book_1.SetAuthors(bookAuthors);
-            book_2.SetAuthors(bookAuthors[0]);
+            book_2.SetAuthor(bookAuthors[0]);
 
             books_authors[0].AddBook(bookAuthors[0]);
             books_authors[0].AddBook(bookAuthors[1]);

@@ -12,7 +12,6 @@ using Xunit;
 
 namespace LibraryApp.Tests.Application.UnitTests
 {
-    
     public class ValidationBehaviourTests
     {
         private readonly Mock<AbstractValidator<IRequest<IRequestResult>>> _validator = new Mock<AbstractValidator<IRequest<IRequestResult>>>();

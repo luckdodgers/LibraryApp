@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace LibraryApp.Application
 {
@@ -33,6 +34,7 @@ namespace LibraryApp.Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IRequestPreProcessor<>), typeof(LoggingBehaviour<>));
 
+            services.AddLogging(config => config.ClearProviders().AddConsole());
 
             return services;
         }
