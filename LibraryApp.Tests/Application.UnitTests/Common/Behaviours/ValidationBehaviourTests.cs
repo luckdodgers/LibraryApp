@@ -2,13 +2,13 @@
 using FluentValidation.Results;
 using LibraryApp.Application.Application.Common.Models;
 using LibraryApp.Application.Common.Behaviours;
-using LibraryApp.Application.Common.Models;
 using MediatR;
 using Moq;
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using FluentAssertions;
 
 namespace LibraryApp.Tests.Application.UnitTests
 {
@@ -24,7 +24,7 @@ namespace LibraryApp.Tests.Application.UnitTests
             _okRequestResult.SetupGet(ok => ok.Succeeded).Returns(true);
         }
 
-        [Fact]
+        [Test]
         public async Task SendInvalidData_ShouldReturnFailRequestResult()
         {
             _validator
@@ -36,10 +36,10 @@ namespace LibraryApp.Tests.Application.UnitTests
 
             var result = await behaviour.Handle(_command.Object, _cancelToken, nextDelegate);
 
-            Assert.False(result.Succeeded);
+            result.Succeeded.Should().BeFalse();
         }
 
-        [Fact]
+        [Test]
         public async Task SendValidData_ShouldReturnSuccessRequestResult()
         {
             _validator
@@ -51,7 +51,7 @@ namespace LibraryApp.Tests.Application.UnitTests
 
             var result = await behaviour.Handle(_command.Object, _cancelToken, nextDelegate);
 
-            Assert.True(result.Succeeded);
+            result.Succeeded.Should().BeTrue();
         }
     }
 }

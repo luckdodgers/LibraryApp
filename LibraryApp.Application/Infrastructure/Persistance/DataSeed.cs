@@ -18,10 +18,16 @@ namespace LibraryApp.Infrastructure.Persistance
         public static async Task EnsureSeedData(IServiceProvider provider)
         {
             var dbContext = provider.GetRequiredService<AppDbContext>();
-            //var userManager = provider.GetRequiredService<UserManager<AppUser>>();
             var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
             var mediator = provider.GetRequiredService<IMediator>();
             var userService = provider.GetRequiredService<IIdentityService>();
+
+            var context = provider.GetRequiredService<AppDbContext>();
+
+            if (context.Database.IsSqlServer())
+            {
+                context.Database.Migrate();
+            }
 
             await dbContext.Database.MigrateAsync();
 

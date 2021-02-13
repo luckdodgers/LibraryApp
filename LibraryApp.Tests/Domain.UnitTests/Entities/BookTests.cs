@@ -1,11 +1,12 @@
 ﻿using LibraryApp.Domain.Entities;
 using Moq;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit;
+using FluentAssertions;
 
 namespace LibraryApp.Tests.Domain.Tests.Entities
 {
@@ -14,7 +15,7 @@ namespace LibraryApp.Tests.Domain.Tests.Entities
         const string title = "testTitle";
         private readonly Mock<Author> author = new Mock<Author>(string.Empty);
 
-        [Fact]
+        [Test]
         public void SetAuthor_ShouldSetAndFlushPrevious()
         {
             var book = new Book(title);
@@ -24,11 +25,10 @@ namespace LibraryApp.Tests.Domain.Tests.Entities
 
             book.SetAuthor(newBookAuthor.Object);
 
-            Assert.Contains(book.BookAuthors, ba => ba == newBookAuthor.Object);
-            Assert.DoesNotContain(book.BookAuthors, ba => ba == oldBookAuthor.Object);
+            book.BookAuthors.Should().OnlyContain(ba => ba == newBookAuthor.Object);
         }
 
-        [Fact]
+        [Test]
         public void SetSeveralAuthors_ShouldSetAndFlushPrevious()
         {
             var book = new Book(title);
@@ -48,18 +48,17 @@ namespace LibraryApp.Tests.Domain.Tests.Entities
             book.SetAuthors(existedBookAuthors);
             book.SetAuthors(newBookAuthors);
 
-            Assert.True(book.BookAuthors.SequenceEqual(newBookAuthors));
-            Assert.False(book.BookAuthors.Intersect(existedBookAuthors).Any());
+            book.BookAuthors.Should().BeEquivalentTo(newBookAuthors);
         }
 
-        [Fact]
+        [Test]
         public void SetCardAndTerms_ReturnDateShouldBeLaterThanReceiveDate()
         {
             var book = new Book(title);
 
             book.SetCardAndTerms(1);
 
-            Assert.True(book.ReturnDate.Value > book.ReceiveDate.Value);
+            book.ReturnDate.Value.Should().BeAfter(book.ReceiveDate.Value);
         }
     }
 }
