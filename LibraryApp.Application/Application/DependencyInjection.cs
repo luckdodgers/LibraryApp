@@ -22,7 +22,7 @@ namespace LibraryApp.Application
             services.AddMediatR(typeof(Startup));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            Assembly.GetEntryAssembly().GetTypesAssignableFrom<IValidator>().ForEach((t) =>
+            Assembly.GetAssembly(typeof(Startup)).GetTypesAssignableFrom<IValidator>().ForEach((t) =>
             {
                 services.AddScoped(typeof(IValidator), t);
             });

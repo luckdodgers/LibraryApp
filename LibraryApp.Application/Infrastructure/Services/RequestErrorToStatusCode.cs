@@ -28,6 +28,7 @@ namespace LibraryApp.Infrastructure.Services
                     return StatusCodes.Status404NotFound;
 
                 case RequestError.ValidationError:
+                case RequestError.OtherError:
                     return StatusCodes.Status400BadRequest;
 
                 default:

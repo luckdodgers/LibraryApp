@@ -22,12 +22,12 @@ namespace LibraryApp.Infrastructure.Persistance
             var mediator = provider.GetRequiredService<IMediator>();
             var userService = provider.GetRequiredService<IIdentityService>();
 
-            var context = provider.GetRequiredService<AppDbContext>();
+            //var context = provider.GetRequiredService<AppDbContext>();
 
-            if (context.Database.IsSqlServer())
-            {
-                context.Database.Migrate();
-            }
+            //if (context.Database.IsSqlServer())
+            //{
+            //    context.Database.Migrate();
+            //}
 
             await dbContext.Database.MigrateAsync();
 

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,7 +30,9 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
             {
                 var book = await _context.Books.FirstOrDefaultAsync();
 
-                if (await _context.Books.AnyAsync(b => b.Title == request.Title && b.BookAuthors == request.Authors))
+                var test = await _context.Books.Where(b => b.Title == request.Title && b.BookAuthors.Any(ba => request.Authors.Any(ra => ra == ba.Author.Name))).ToListAsync();
+
+                if (test.Any())
                     return RequestResult.Fail(RequestError.AlreadyExists, $"Book with title {request.Title} and authors {string.Join(", ", request.Authors)} already exist");
 
                 // Caching authors of new book

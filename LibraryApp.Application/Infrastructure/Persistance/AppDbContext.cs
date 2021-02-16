@@ -16,7 +16,7 @@ namespace LibraryApp.Infrastructure.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(Startup)));
 
             base.OnModelCreating(modelBuilder);
         }

@@ -2,10 +2,11 @@
 {
     public enum RequestError
     {
-        None,
-        NotFound,
-        AlreadyExists,
+        None = 0, // No errors, default state
+        NotFound, // Requested resource not found
+        AlreadyExists, // Fail while resource adding, already exists
         ValidationError,
-        ApplicationException,
+        ApplicationException, // Internal app error
+        OtherError // Not classified error
     }
 }
