@@ -6,7 +6,7 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
     {
         public AddBooksToCardValidator()
         {
-            RuleFor(c => c.BookId).NotEmpty();
+            //RuleFor(c => c.BookId).NotEmpty();
             RuleFor(c => c.UserName).NotEmpty();
         }
     }

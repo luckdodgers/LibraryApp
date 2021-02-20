@@ -28,11 +28,7 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
         {
             try
             {
-                var book = await _context.Books.FirstOrDefaultAsync();
-
-                var test = await _context.Books.Where(b => b.Title == request.Title && b.BookAuthors.Any(ba => request.Authors.Any(ra => ra == ba.Author.Name))).ToListAsync();
-
-                if (test.Any())
+                if (_context.Books.Where(b => b.Title == request.Title && b.Authors.Any(ba => request.Authors.Any(ra => ra == ba.Name))).Any())
                     return RequestResult.Fail(RequestError.AlreadyExists, $"Book with title {request.Title} and authors {string.Join(", ", request.Authors)} already exist");
 
                 // Caching authors of new book
@@ -53,26 +49,8 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
                     authors.Add(author);
                 }
 
-                // Adding new book
-                book = new Book(request.Title);
-                await _context.Books.AddAsync(book);
-                await _context.SaveChangesAsync();
-
-                // Caching join entity
-                var bookAuthors = new List<BookAuthor>(request.Authors.Count);
-
-                // Adding join entites to Authors
-                foreach (var author in authors)
-                {
-                    var bookAuthor = new BookAuthor(authorId: author.Id, author: author, bookId: book.Id, book: book);
-                    bookAuthors.Add(bookAuthor);
-                    author.AddBook(bookAuthor);
-
-                    await _context.BookAuthors.AddAsync(bookAuthor);
-                }
-
-                // Adding join entites to Book
-                book.SetAuthors(bookAuthors);
+                var book = new Book(request.Title);
+                book.SetAuthors(authors);
                 await _context.SaveChangesAsync();
             }
 

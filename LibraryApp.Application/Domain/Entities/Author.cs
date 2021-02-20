@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using LibraryApp.Application.Domain.Entities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LibraryApp.Domain.Entities
 {
-    public class Author
+    public class Author : IDomainEntity
     {
         public Author(string name)
         {
@@ -15,9 +16,8 @@ namespace LibraryApp.Domain.Entities
         public int Id { get; }
         public string Name { get; }
 
-        private HashSet<BookAuthor> _bookAuthors = new HashSet<BookAuthor>();
-        public IReadOnlyCollection<BookAuthor> BookAuthors => _bookAuthors.ToList();
+        public ICollection<Book> Books { get; private set; } = new HashSet<Book>();
 
-        public void AddBook(BookAuthor bookAuthor) => _bookAuthors.Add(bookAuthor);
+        public void AddBook(Book book) => Books.Add(book);
     }
 }

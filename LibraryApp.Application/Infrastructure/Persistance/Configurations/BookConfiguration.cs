@@ -15,9 +15,8 @@ namespace LibraryApp.Infrastructure.Persistance.Configurations
                 .HasMaxLength(100)
                 .IsRequired();
 
-            builder.Navigation(b => b.BookAuthors)
-                .HasField("_bookAuthors")
-                .UsePropertyAccessMode(PropertyAccessMode.Field);
+            builder.HasMany(b => b.Authors)
+                .WithMany(a => a.Books);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace LibraryApp.Application.Common.Mappings
             CreateMap<UserRegistrationCommand, AppUser>();
             CreateMap<Book, LibraryBookDto>()
                 .ForMember(dto => dto.Authors,
-                opt => opt.MapFrom(b => b.BookAuthors.Select(ba => ba.Author)))
+                opt => opt.MapFrom(b => b.Authors))
                 .ForMember(dto => dto.BecomeAvailableDate,
                 opt => opt.MapFrom(b => b.ReturnDate));
         }

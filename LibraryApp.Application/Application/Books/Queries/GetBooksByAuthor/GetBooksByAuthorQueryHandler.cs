@@ -38,8 +38,8 @@ namespace LibraryApp.Application.Books.Queries.GetBooksByAuthor
                 if (author == null)
                     return QueryResult<List<LibraryBookDto>>.Fail(RequestError.NotFound, $"Requested author {request.AuthorName} not found");
 
-                await _context.Entry(author).Collection(a => a.BookAuthors).LoadAsync();
-                var books = author.BookAuthors.Select(ba => ba.Book);
+                await _context.Entry(author).Collection(a => a.Books).LoadAsync();
+                var books = author.Books.AsEnumerable();
 
                 if (request.CurrentlyAvailableOnly)
                     books = books.Where(b => b.CardId == null);

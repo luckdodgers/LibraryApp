@@ -1,21 +1,13 @@
-﻿using LibraryApp.Application.Infrastructure.Identity;
+﻿using LibraryApp.Application.Domain.Entities;
+using LibraryApp.Domain.Entities;
 using LibraryApp.Infrastructure.Identity.Models;
 using LibraryApp.Infrastructure.Persistance;
 using MediatR;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using NUnit.Framework;
-using Respawn;
-using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using LibraryApp.Domain.Entities;
-
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Tests.Application.IntegrationTests
 {
@@ -23,6 +15,8 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
     class ScopedRequest
     {
+        public static int defaultUserCardId;
+
         public static async Task<string> RunAsDefaultUserAsync()
         {
             const string userName = "testUsername";
@@ -44,12 +38,9 @@ namespace LibraryApp.Tests.Application.IntegrationTests
                 //_currentUserId = user.Id;
                 var context = scope.ServiceProvider.GetService<AppDbContext>();
                 await context.Cards.AddAsync(new Card(userName));
-                return user.UserName;
             }
 
-            var errors = string.Join(Environment.NewLine, result.ToApplicationResult().Errors);
-
-            throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
+            return user.UserName;
         }
 
         public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
@@ -60,13 +51,23 @@ namespace LibraryApp.Tests.Application.IntegrationTests
             return await mediator.Send(request);
         }
 
-        public static async Task<TEntity> FindAsync<TEntity>(params object[] keyValues)
-        where TEntity : class
+        public static async Task<Book> GetBookByTitleAsync(string title)
         {
             using var scope = ScopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetService<AppDbContext>();
 
-            return await context.FindAsync<TEntity>(keyValues);
+            return await context.Books.FirstOrDefaultAsync(b => b.Title == title);
+        }
+
+        public static async Task AddAsync<TEntity>(TEntity entity) 
+            where TEntity : IDomainEntity
+        {
+            using var scope = ScopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetService<AppDbContext>();
+
+            context.Add(entity);
+        
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using LibraryApp.Application.Domain.Entities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LibraryApp.Domain.Entities
 {
-    public class Card
+    public class Card : IDomainEntity
     {
         public int Id { get; }
         public string UserName { get; }

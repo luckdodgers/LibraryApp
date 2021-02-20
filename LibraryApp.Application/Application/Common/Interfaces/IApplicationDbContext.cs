@@ -11,7 +11,6 @@ namespace LibraryApp.Application.Common.Interfaces
         EntityEntry<T> Entry<T>(T entity) where T : class;
         DbSet<Book> Books { get; set; }
         DbSet<Author> Authors { get; set; }
-        DbSet<BookAuthor> BookAuthors { get; set; }
         DbSet<Card> Cards { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

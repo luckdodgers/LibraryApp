@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LibraryApp.Application.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace LibraryApp.Domain.Entities
 {
-    public class Book
+    public class Book : IDomainEntity
     {
         public Book(string title)
         {
@@ -15,20 +16,19 @@ namespace LibraryApp.Domain.Entities
 
         public virtual int Id { get; }
         public string Title { get; }
-        private HashSet<BookAuthor> _bookAuthors = new HashSet<BookAuthor>();
-        public IReadOnlyList<BookAuthor> BookAuthors => _bookAuthors.ToList();
+        public ICollection<Author> Authors { get; private set; } = new HashSet<Author>();
         public DateTime? ReceiveDate { get; private set; }
         public DateTime? ReturnDate { get; private set; }
         public virtual int? CardId { get; private set; }
 
-        public void SetAuthors(IEnumerable<BookAuthor> bookAuthors) => _bookAuthors = bookAuthors.ToHashSet();
-        public void SetAuthor(BookAuthor bookAuthor)
+        public void SetAuthors(IEnumerable<Author> authors) => Authors = authors.ToHashSet();
+        public void SetAuthor(Author author)
         {
-            if (_bookAuthors == null)
-                _bookAuthors = new HashSet<BookAuthor>();
+            if (Authors == null)
+                Authors = new HashSet<Author>();
 
-            _bookAuthors.Clear();
-            _bookAuthors.Add(bookAuthor);
+            Authors.Clear();
+            Authors.Add(author);
         }
 
         public void SetCardAndTerms(int cardId)

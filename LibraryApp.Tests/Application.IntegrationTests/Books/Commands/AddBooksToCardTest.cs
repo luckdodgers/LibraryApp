@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using LibraryApp.Application.Books.Commands.AddBooksToCard;
-using LibraryApp.Application.Books.Commands.AddBookToLibrary;
 using LibraryApp.Application.Common.Enums;
 using LibraryApp.Domain.Entities;
+using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
@@ -13,7 +14,6 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
 
     class AddBooksToCardTest : BaseTest
     {
-        private const int _bookId = 1;
         private const string _title = "Test title";
         private const string _author_1 = "Author A";
         private const string _author_2 = "Author B";
@@ -33,14 +33,16 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
         public async Task SendValidCommand_ShouldAddBookToCard()
         {
             var username = await RunAsDefaultUserAsync();
-            var addBookToLibraryCmd = new AddBookToLibraryCommand()
+            var authors = new List<Mock<Author>>()
             {
-                Title = _title,
-                Authors = new List<string>() { _author_1, _author_2 }
+                new Mock<Author>(_author_1),
+                new Mock<Author>(_author_2)
             };
-            var addToLibraryResult = await SendAsync(addBookToLibraryCmd);
-
-            var addBookToCardCmd = new AddBooksToCardCommand(_bookId, username);
+            var book = new Mock<Book>(_title);
+            book.Object.SetAuthors(authors.Select(a => a.Object));
+            await AddAsync(book.Object);
+            var bookFromDb = await GetBookByTitleAsync(_title);
+            var addBookToCardCmd = new AddBooksToCardCommand(bookFromDb.Id, username);
 
             var result = await SendAsync(addBookToCardCmd);
 

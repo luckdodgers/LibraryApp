@@ -19,36 +19,34 @@ namespace LibraryApp.Tests.Domain.Tests.Entities
         public void SetAuthor_ShouldSetAndFlushPrevious()
         {
             var book = new Book(title);
-            var oldBookAuthor = new Mock<BookAuthor>(1, author.Object, 1, book);
-            var newBookAuthor = new Mock<BookAuthor>(2, author.Object, 2, book);
-            book.SetAuthor(oldBookAuthor.Object);
+            var oldAuthor = new Mock<Author>("author_1");
+            var newAuthor = new Mock<Author>("author_2");
+            book.SetAuthor(oldAuthor.Object);
 
-            book.SetAuthor(newBookAuthor.Object);
+            book.SetAuthor(newAuthor.Object);
 
-            book.BookAuthors.Should().OnlyContain(ba => ba == newBookAuthor.Object);
+            book.Authors.Should().OnlyContain(ba => ba == newAuthor.Object);
         }
 
         [Test]
         public void SetSeveralAuthors_ShouldSetAndFlushPrevious()
         {
             var book = new Book(title);
-
-            var existedBookAuthors = new List<BookAuthor>()
+            var oldAuthors = new List<Mock<Author>>()
             {
-                new Mock<BookAuthor>(1, author.Object, 1, book).Object,
-                new Mock<BookAuthor>(2, author.Object, 2, book).Object
+                new Mock<Author>("author_1"),
+                new Mock<Author>("author_2"),
             };
-
-            var newBookAuthors = new List<BookAuthor>()
+            var newAuthors = new List<Mock<Author>>()
             {
-                new Mock<BookAuthor>(3, author.Object, 3, book).Object,
-                new Mock<BookAuthor>(4, author.Object, 4, book).Object
+                new Mock<Author>("author_3"),
+                new Mock<Author>("author_4"),
             };
+            book.SetAuthors(oldAuthors.Select(a => a.Object));
 
-            book.SetAuthors(existedBookAuthors);
-            book.SetAuthors(newBookAuthors);
+            book.SetAuthors(newAuthors.Select(a => a.Object));
 
-            book.BookAuthors.Should().BeEquivalentTo(newBookAuthors);
+            book.Authors.Should().BeEquivalentTo(newAuthors.Select(a => a.Object));
         }
 
         [Test]
