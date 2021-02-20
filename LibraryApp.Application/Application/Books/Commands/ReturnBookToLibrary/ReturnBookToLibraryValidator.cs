@@ -6,7 +6,7 @@ namespace LibraryApp.Application.Books.Commands.ReturnBookToLibrary
     {
         public ReturnBookToLibraryValidator()
         {
-            RuleFor(c => c.BookId).NotEmpty();
+            RuleFor(c => c.BookId).GreaterThanOrEqualTo(0);
             RuleFor(c => c.UserName).NotEmpty();
         }
     }

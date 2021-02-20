@@ -81,6 +81,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
         public static async Task ResetState()
         {
+            ScopedRequest.ResetState();
             await _checkpoint.Reset(_configuration.GetConnectionString("DefaultConnection"));
             //_currentUserId = null;
         }

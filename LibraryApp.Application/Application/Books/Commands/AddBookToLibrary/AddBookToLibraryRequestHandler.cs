@@ -51,6 +51,7 @@ namespace LibraryApp.Application.Books.Commands.AddBookToLibrary
 
                 var book = new Book(request.Title);
                 book.SetAuthors(authors);
+                await _context.Books.AddAsync(book);
                 await _context.SaveChangesAsync();
             }
 

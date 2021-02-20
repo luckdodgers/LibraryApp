@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace LibraryApp.Tests.Application.IntegrationTests
 {
@@ -15,7 +16,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
     class ScopedRequest
     {
-        public static int defaultUserCardId;
+        public static int UserCardId { get; private set; }
 
         public static async Task<string> RunAsDefaultUserAsync()
         {
@@ -27,9 +28,9 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
         public static async Task<string> RunAsUserAsync(string userName, string password)
         {
-            using var scope = ScopeFactory.CreateScope();
-
+            var scope = ScopeFactory.CreateScope();
             var userManager = scope.ServiceProvider.GetService<UserManager<AppUser>>();
+
             var user = new AppUser { UserName = userName };
             var result = await userManager.CreateAsync(user, password);
 
@@ -38,6 +39,10 @@ namespace LibraryApp.Tests.Application.IntegrationTests
                 //_currentUserId = user.Id;
                 var context = scope.ServiceProvider.GetService<AppDbContext>();
                 await context.Cards.AddAsync(new Card(userName));
+                await context.SaveChangesAsync();
+
+                var cardFromDb = await context.Cards.FirstOrDefaultAsync(c => c.UserName == userName);
+                UserCardId = cardFromDb.Id;
             }
 
             return user.UserName;
@@ -45,7 +50,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
         public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
         {
-            using var scope = ScopeFactory.CreateScope();
+            var scope = ScopeFactory.CreateScope();
             var mediator = scope.ServiceProvider.GetService<IMediator>();
 
             return await mediator.Send(request);
@@ -53,21 +58,28 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
         public static async Task<Book> GetBookByTitleAsync(string title)
         {
-            using var scope = ScopeFactory.CreateScope();
+            var scope = ScopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetService<AppDbContext>();
 
-            return await context.Books.FirstOrDefaultAsync(b => b.Title == title);
+            return await context.Books
+                .Include(b => b.Authors)
+                .FirstOrDefaultAsync(b => b.Title == title);
         }
 
         public static async Task AddAsync<TEntity>(TEntity entity) 
             where TEntity : IDomainEntity
         {
-            using var scope = ScopeFactory.CreateScope();
+            var scope = ScopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetService<AppDbContext>();
 
             context.Add(entity);
         
             await context.SaveChangesAsync();
+        }
+
+        public static void ResetState()
+        {
+            UserCardId = -1;
         }
     }
 }
