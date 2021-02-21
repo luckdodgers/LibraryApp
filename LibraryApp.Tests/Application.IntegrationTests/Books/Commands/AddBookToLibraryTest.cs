@@ -61,7 +61,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
             };
 
             var result = await SendAsync(command);
-            var book = await GetBookByTitleAsync(_title);
+            var book = await GetBookAsync(_title);
 
             result.Succeeded.Should().BeTrue();
             book.Authors.Should().OnlyContain(a => a.Name == _author_1 || a.Name == _author_2);

@@ -18,13 +18,10 @@ namespace LibraryApp.Tests.Application.IntegrationTests
     {
         public static int UserCardId { get; private set; }
 
-        public static async Task<string> RunAsDefaultUserAsync()
-        {
-            const string userName = "testUsername";
-            const string password = "Password1234!";
+        private const string userName = "testUsername";
+        private const string password = "Password1234!";
 
-            return await RunAsUserAsync(userName, password);
-        }
+        public static async Task<string> RunAsDefaultUserAsync() => await RunAsUserAsync(userName, password);
 
         public static async Task<string> RunAsUserAsync(string userName, string password)
         {
@@ -56,7 +53,18 @@ namespace LibraryApp.Tests.Application.IntegrationTests
             return await mediator.Send(request);
         }
 
-        public static async Task<Book> GetBookByTitleAsync(string title)
+        public static async Task AddAsync<TEntity>(TEntity entity) 
+            where TEntity : IDomainEntity
+        {
+            var scope = ScopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetService<AppDbContext>();
+
+            context.Add(entity);
+        
+            await context.SaveChangesAsync();
+        }
+
+        public static async Task<Book> GetBookAsync(string title)
         {
             var scope = ScopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetService<AppDbContext>();
@@ -66,14 +74,25 @@ namespace LibraryApp.Tests.Application.IntegrationTests
                 .FirstOrDefaultAsync(b => b.Title == title);
         }
 
-        public static async Task AddAsync<TEntity>(TEntity entity) 
-            where TEntity : IDomainEntity
+        public static async Task<Card> GetDefaultUserCardAsync()
         {
             var scope = ScopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetService<AppDbContext>();
 
-            context.Add(entity);
-        
+            return await context.Cards
+                .Include(c => c.Books)
+                .FirstAsync(c => c.Id == UserCardId);
+        }
+
+        public static async Task AddBookToCardAsync(Book book, string username = userName)
+        {
+            var scope = ScopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetService<AppDbContext>();
+
+            var card = await context.Cards.Include(c => c.Books).FirstAsync(c => c.UserName == userName);
+
+            card.TryAddBook(book);
+
             await context.SaveChangesAsync();
         }
 

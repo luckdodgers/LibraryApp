@@ -26,7 +26,12 @@ namespace LibraryApp.Tests.Application.IntegrationTests
             await AddAsync(book.Object); 
 
             // Return created book from DB
-            return await GetBookByTitleAsync(_title);
+            return await GetBookAsync(_title);
+        }
+
+        public static async Task SeedBookToCard(Book book, string username)
+        {
+            
         }
     }
 }

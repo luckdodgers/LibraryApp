@@ -39,11 +39,13 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
 
             // Act
             var result = await SendAsync(addBookToCardCmd);          
-            var bookAfterAddToCard = await GetBookByTitleAsync(_title); // Get DB book reference again, after setting it's CardId by test command
+            var bookAfterAddToCard = await GetBookAsync(_title); // Get DB book reference again, after setting it's CardId by test command
+            var card = await GetDefaultUserCardAsync();
 
             // Assert
             result.Succeeded.Should().BeTrue();
             bookAfterAddToCard.CardId.Should().Equals(UserCardId);
+            card.Books.Should().Contain(b => b.Id == bookAfterAddToCard.Id);
         }
     }
 }

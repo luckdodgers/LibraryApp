@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using LibraryApp.Application.Common.Models;
 using MediatR;
 using LibraryApp.Application.Books.Commands.ReturnBookToLibrary;
+using LibraryApp.Application.Books.Commands.AddBooksToCard;
 
 namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
 {
@@ -37,9 +38,19 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
         {
             // Arrange
             var username = await RunAsDefaultUserAsync();
-            var book = Arrange.SeedBookToLibrary(_title, _author_1, _author_2);
+            var book = await Arrange.SeedBookToLibrary(_title, _author_1, _author_2);
+            await AddBookToCardAsync(book);
+            var command = new AddBooksToCardCommand(book.Id, username);
 
+            // Act
+            var result = await SendAsync(command);
+            var bookRemovedFromCard = await GetBookAsync(book.Title);
+            var card = await GetDefaultUserCardAsync();
 
+            // Assert
+            result.Succeeded.Should().BeTrue();
+            bookRemovedFromCard.CardId.Should().BeNull();
+            card.Books.Should().NotContain(b => b.Id == book.Id);
         }
     }
 }
