@@ -1,16 +1,8 @@
 ﻿using FluentAssertions;
-using LibraryApp.Application.Books.Commands.AddBookToLibrary;
+using LibraryApp.Application.Books.Commands.ReturnBookToLibrary;
 using LibraryApp.Application.Common.Enums;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using LibraryApp.Application.Common.Models;
-using MediatR;
-using LibraryApp.Application.Books.Commands.ReturnBookToLibrary;
-using LibraryApp.Application.Books.Commands.AddBooksToCard;
 
 namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
 {
@@ -18,10 +10,6 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
 
     class ReturnBookToLibraryTest : BaseTest
     {
-        private const string _title = "Test title";
-        private const string _author_1 = "Author A";
-        private const string _author_2 = "Author B";
-
         [Test]
         public async Task SendCommandWithDefaultFields_ShouldReturnValidationError()
         {
@@ -38,9 +26,9 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
         {
             // Arrange
             var username = await RunAsDefaultUserAsync();
-            var book = await Arrange.SeedBookToLibrary(_title, _author_1, _author_2);
-            await AddBookToCardAsync(book);
-            var command = new AddBooksToCardCommand(book.Id, username);
+            var book = await Arrange.SeedBookToLibrary(Arrange.Title, Arrange.Author_1, Arrange.Author_2);
+            await AddBookToCardAsync(book.Id);
+            var command = new ReturnBookToLibraryCommand(book.Id, username);
 
             // Act
             var result = await SendAsync(command);

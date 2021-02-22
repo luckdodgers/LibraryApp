@@ -14,9 +14,6 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
 
     class AddBookToLibraryTest : BaseTest
     {
-        private const string _title = "Test title";
-        private const string _author_1 = "Author A";
-        private const string _author_2 = "Author B";
         private const string _duplicateAuthor = "Same author";
         private const string _duplicateTitle = "Same title";
 
@@ -56,15 +53,15 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
         {
             var command = new AddBookToLibraryCommand()
             {
-                Authors = new List<string>() { _author_1, _author_2 },
-                Title = _title
+                Authors = new List<string>() { Arrange.Author_1, Arrange.Author_2 },
+                Title = Arrange.Title
             };
 
             var result = await SendAsync(command);
-            var book = await GetBookAsync(_title);
+            var book = await GetBookAsync(Arrange.Title);
 
             result.Succeeded.Should().BeTrue();
-            book.Authors.Should().OnlyContain(a => a.Name == _author_1 || a.Name == _author_2);
+            book.Authors.Should().OnlyContain(a => a.Name == Arrange.Author_1 || a.Name == Arrange.Author_2);
         }
     }
 }

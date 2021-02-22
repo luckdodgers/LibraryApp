@@ -31,7 +31,7 @@ namespace LibraryApp.Application.Books.Commands.AddBooksToCard
                     return RequestResult.Fail(RequestError.NotFound, $"Requested book Id={request.BookId} not found");
 
                 var card = await _context.Cards.FirstAsync(c => c.UserName == request.UserName);
-                card.TryAddBook(bookToAdd);
+                var isSuccess = card.TryAddBook(bookToAdd);
 
                 await _context.SaveChangesAsync();
             }

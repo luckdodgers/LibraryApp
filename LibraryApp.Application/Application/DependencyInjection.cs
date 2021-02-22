@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using LibraryApp.Application.Common.Behaviours;
 using LibraryApp.Application.Common.Interfaces;
 using LibraryApp.Infrastructure.Persistance;
@@ -8,10 +7,10 @@ using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 
 namespace LibraryApp.Application
 {

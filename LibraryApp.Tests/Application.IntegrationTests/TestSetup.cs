@@ -45,16 +45,6 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
             startup.ConfigureServices(services);
 
-            //// Replace service registration for ICurrentUserService
-            //// Remove existing registration
-            //var currentUserServiceDescriptor = services.FirstOrDefault(d =>
-            //    d.ServiceType == typeof(ICurrentUserService));
-
-
-            //// Register testing version
-            //services.AddTransient(provider =>
-            //    Mock.Of<ICurrentUserService>(s => s.UserId == _currentUserId));
-
             ScopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
 
             _checkpoint = new Checkpoint
@@ -74,16 +64,10 @@ namespace LibraryApp.Tests.Application.IntegrationTests
             context.Database.Migrate();
         }
 
-        private static void SeedDatabase()
-        {
-
-        }
-
         public static async Task ResetState()
         {
             ScopedRequest.ResetState();
             await _checkpoint.Reset(_configuration.GetConnectionString("DefaultConnection"));
-            //_currentUserId = null;
         }
     }
 }

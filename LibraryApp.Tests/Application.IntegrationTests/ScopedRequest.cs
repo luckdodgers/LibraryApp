@@ -84,11 +84,12 @@ namespace LibraryApp.Tests.Application.IntegrationTests
                 .FirstAsync(c => c.Id == UserCardId);
         }
 
-        public static async Task AddBookToCardAsync(Book book, string username = userName)
+        public static async Task AddBookToCardAsync(int id, string username = userName)
         {
             var scope = ScopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetService<AppDbContext>();
 
+            var book = await context.Books.FindAsync(id);
             var card = await context.Cards.Include(c => c.Books).FirstAsync(c => c.UserName == userName);
 
             card.TryAddBook(book);

@@ -12,6 +12,10 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
     public static class Arrange
     {
+        public const string Title = "Test title";
+        public const string Author_1 = "Author A";
+        public const string Author_2 = "Author B";
+
         /// <summary>
         /// Seed book to library
         /// </summary>
@@ -27,11 +31,6 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
             // Return created book from DB
             return await GetBookAsync(_title);
-        }
-
-        public static async Task SeedBookToCard(Book book, string username)
-        {
-            
         }
     }
 }
