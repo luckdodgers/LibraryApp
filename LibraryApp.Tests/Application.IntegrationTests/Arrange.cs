@@ -1,9 +1,6 @@
 ﻿using LibraryApp.Domain.Entities;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LibraryApp.Tests.Application.IntegrationTests
@@ -27,7 +24,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests
             book.Object.SetAuthors(authors.Select(a => a.Object));
 
             // Add book to database
-            await AddAsync(book.Object); 
+            await AddAsync(book.Object);
 
             // Return created book from DB
             return await GetBookAsync(_title);

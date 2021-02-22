@@ -47,11 +47,6 @@ namespace LibraryApp.Infrastructure.Controllers
             return StatusCode(_errorToStatusCode.Convert(response.ErrorType));
         }
 
-        /// <summary>
-        /// Some comment
-        /// </summary>
-        /// <param name="bookId"></param>
-        /// <returns></returns>
         [HttpPost]
         [Route("[action]/bookid={bookId}")]
         public async Task<ActionResult> AddToCard(int bookId) // Ok

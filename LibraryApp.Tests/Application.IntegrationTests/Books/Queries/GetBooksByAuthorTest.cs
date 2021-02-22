@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using LibraryApp.Application.Books.Commands.ReturnBookToLibrary;
 using LibraryApp.Application.Books.Queries.GetBooksByAuthor;
 using LibraryApp.Application.Common.Enums;
 using LibraryApp.Application.Common.Models;
@@ -27,7 +26,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Queries
             result.Succeeded.Should().BeFalse();
             result.ErrorType.Should().Be(RequestError.ValidationError);
         }
-        
+
         [Test]
         public async Task SendNonExistingAuthor_ShouldReturnNotFoundError()
         {

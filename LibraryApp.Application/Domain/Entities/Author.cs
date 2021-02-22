@@ -1,6 +1,5 @@
 ﻿using LibraryApp.Application.Domain.Entities;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LibraryApp.Domain.Entities
 {

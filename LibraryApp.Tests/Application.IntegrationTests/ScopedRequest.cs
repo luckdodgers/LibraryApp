@@ -4,11 +4,9 @@ using LibraryApp.Infrastructure.Identity.Models;
 using LibraryApp.Infrastructure.Persistance;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace LibraryApp.Tests.Application.IntegrationTests
 {
@@ -33,7 +31,6 @@ namespace LibraryApp.Tests.Application.IntegrationTests
 
             if (result.Succeeded)
             {
-                //_currentUserId = user.Id;
                 var context = scope.ServiceProvider.GetService<AppDbContext>();
                 await context.Cards.AddAsync(new Card(userName));
                 await context.SaveChangesAsync();
@@ -53,14 +50,14 @@ namespace LibraryApp.Tests.Application.IntegrationTests
             return await mediator.Send(request);
         }
 
-        public static async Task AddAsync<TEntity>(TEntity entity) 
+        public static async Task AddAsync<TEntity>(TEntity entity)
             where TEntity : IDomainEntity
         {
             var scope = ScopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetService<AppDbContext>();
 
             context.Add(entity);
-        
+
             await context.SaveChangesAsync();
         }
 

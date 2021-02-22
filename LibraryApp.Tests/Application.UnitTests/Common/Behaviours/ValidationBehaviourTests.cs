@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using FluentAssertions;
+using FluentValidation;
 using FluentValidation.Results;
 using LibraryApp.Application.Application.Common.Models;
 using LibraryApp.Application.Common.Behaviours;
@@ -8,7 +9,6 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 
 namespace LibraryApp.Tests.Application.UnitTests
 {
@@ -29,7 +29,7 @@ namespace LibraryApp.Tests.Application.UnitTests
         {
             _validator
                 .Setup(v => v.Validate(It.IsAny<ValidationContext<IRequest<IRequestResult>>>()))
-                .Returns(new ValidationResult(new List<ValidationFailure>() { new ValidationFailure(string.Empty, string.Empty) } ));
+                .Returns(new ValidationResult(new List<ValidationFailure>() { new ValidationFailure(string.Empty, string.Empty) }));
             var _validatorsList = new List<IValidator>() { _validator.Object };
             var behaviour = new ValidationBehaviour<IRequest<IRequestResult>, IRequestResult>(_validatorsList);
             RequestHandlerDelegate<IRequestResult> nextDelegate = () => Task.FromResult(_okRequestResult.Object);

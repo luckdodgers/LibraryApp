@@ -1,17 +1,13 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Respawn;
+﻿using LibraryApp.Infrastructure.Persistance;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
 using Moq;
-using Microsoft.AspNetCore.Hosting;
-using LibraryApp.Infrastructure.Persistance;
-using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
+using Respawn;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace LibraryApp.Tests.Application.IntegrationTests
 {

@@ -30,7 +30,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Commands
             var addBookToCardCmd = new AddBooksToCardCommand(bookBeforeAddToCard.Id, username);
 
             // Act
-            var result = await SendAsync(addBookToCardCmd);          
+            var result = await SendAsync(addBookToCardCmd);
             var bookAfterAddToCard = await GetBookAsync(Arrange.Title); // Get DB book reference again, after setting it's CardId by test command
             var card = await GetDefaultUserCardAsync();
 
