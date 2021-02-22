@@ -28,7 +28,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests
         {
             var builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Testing.json", true, true)
+            .AddJsonFile("appsettings.json", true, true)
             .AddEnvironmentVariables();
 
             _configuration = builder.Build();

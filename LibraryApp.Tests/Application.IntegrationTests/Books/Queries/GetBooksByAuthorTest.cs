@@ -14,7 +14,7 @@ namespace LibraryApp.Tests.Application.IntegrationTests.Books.Queries
     class GetBooksByAuthorTest : BaseTest
     {
         [Test]
-        public async Task SendCommandWithDefaultFields_ShouldReturnValidationError()
+        public async Task SendQueryWithDefaultFields_ShouldReturnValidationError()
         {
             var query = new GetBooksByAuthorQuery()
             {
